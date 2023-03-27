@@ -93,14 +93,14 @@ const userController = {
 
         const checkPassword = passwordChecker(password);
 
-        if(!checkPassword){
-            return res.status(400).json("Sécurisez votre mot de passe avec au moins une majuscule, un symbole et un chiffre.");
-        };
-        
         if(password !== passwordConfirm){
             return res.status(400).json("Le mot de passe et le mot de passe de confirmation ne sont pas identiques.");
         };
 
+        if(!checkPassword){
+            return res.status(400).json("Sécurisez votre mot de passe avec au moins une majuscule, un symbole et un chiffre.");
+        };
+        
         const hashedPassword = bcrypt.hashSync(password, 10);
 
         const newUser = {
@@ -118,7 +118,7 @@ const userController = {
 
     updateOne: async (req, res) => {
         const userId = req.params.userId;
-        const {firstname, lastname, nickname, phone, password, email, gender} = req.body;
+        const {firstname, lastname, nickname, phone, password, passwordConfirm, email, gender} = req.body;
 
         const findUser = await User.findByPk(userId);
 
@@ -162,7 +162,12 @@ const userController = {
             findUser.nickname = nickname;
         };
 
-        if(password === passwordConfirm){
+        if(password){
+
+            if(password !== passwordConfirm){
+                return res.status(400).json("Le mot de passe et le mot de passe de confirmation ne sont pas identiques.");
+            };
+
             const checkPassword = passwordChecker(password);
             if(!checkPassword){
                 return res.status(400).json("Sécurisez votre nouveau mot de passe avec au moins une majuscule, un symbole et un chiffre.")
