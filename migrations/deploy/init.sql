@@ -4,10 +4,10 @@ BEGIN;
 
 -- XXX Add DDLs here.
 
-CREATE TYPE user_gender AS ENUM ('femme', 'homme', 'non-spécifié');
-CREATE TYPE user_profile_visibility AS ENUM ('publique', 'privé');
+CREATE TYPE IF NOT EXISTS user_gender AS ENUM ('femme', 'homme', 'non-spécifié');
+CREATE TYPE IF NOT EXISTS user_profile_visibility AS ENUM ('publique', 'privé');
 
-CREATE TABLE "user" (
+CREATE TABLE IF NOT EXISTS "user" (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     firstname TEXT NOT NULL,
     lastname TEXT NOT NULL,
@@ -24,16 +24,16 @@ CREATE TABLE "user" (
 
 -- challenge --
 
-CREATE TABLE challenge (
+CREATE TABLE IF NOT EXISTS challenge (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     label TEXT NOT NULL UNIQUE,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NULL
 );
 
-CREATE TYPE completed_challenge AS ENUM ('yes', 'no');
+CREATE TYPE IF NOT EXISTS completed_challenge AS ENUM ('yes', 'no');
 
-CREATE TABLE challenge_user (
+CREATE TABLE IF NOT EXISTS challenge_user (
     user_id INT REFERENCES "user"(id) NOT NULL,
     challenge_id INT REFERENCES challenge(id) ON DELETE CASCADE NOT NULL,
     completed completed_challenge DEFAULT 'no',
@@ -46,23 +46,23 @@ CREATE TABLE challenge_user (
 
 -- Product section --
 
-CREATE TYPE product_availability AS ENUM ('disponible', 'indisponible', 'bientôt');
+CREATE TYPE IF NOT EXISTS product_availability AS ENUM ('disponible', 'indisponible', 'bientôt');
 
-CREATE TABLE company (
+CREATE TABLE IF NOT EXISTS company (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     label TEXT NOT NULL UNIQUE,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NULL
 );
 
-CREATE TABLE category_product (
+CREATE TABLE IF NOT EXISTS category_product (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     label TEXT NOT NULL UNIQUE,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NULL
 );
 
-CREATE TABLE product (
+CREATE TABLE IF NOT EXISTS product (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     label TEXT NOT NULL UNIQUE,
     availability product_availability DEFAULT 'disponible',
@@ -73,7 +73,7 @@ CREATE TABLE product (
     updated_at TIMESTAMPTZ DEFAULT NULL
 );
 
-/*CREATE TABLE comment_product (
+/*CREATE TABLE IF NOT EXISTS comment_product (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     content TEXT NOT NULL,
     product_id INT REFERENCES product(id) NOT NULL ON DELETE CASCADE,
@@ -81,14 +81,14 @@ CREATE TABLE product (
     updated_at TIMESTAMPTZ DEFAULT NULL
 );
 
-CREATE TABLE comment_product_user (
+CREATE TABLE IF NOT EXISTS comment_product_user (
     user_id INT REFERENCES "user"(id) NOT NULL ON DELETE CASCADE,
     comment_product_id INT REFERENCES comment_product(id) NOT NULL ON DELETE CASCADE,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NULL
 );
 
-CREATE TABLE bought_product_user (
+CREATE TABLE IF NOT EXISTS bought_product_user (
     user_id INT REFERENCES "user"(id) NOT NULL ON DELETE CASCADE,
     product_id INT REFERENCES product(id) NOT NULL ON DELETE CASCADE,
     address TEXT NOT NULL,
@@ -106,14 +106,14 @@ CREATE TABLE bought_product_user (
 
 -- activity section --
 
-CREATE TABLE category_activity (
+CREATE TABLE IF NOT EXISTS category_activity (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     label TEXT NOT NULL UNIQUE,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NULL
 );
 
-CREATE TABLE activity (
+CREATE TABLE IF NOT EXISTS activity (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     code INT NOT NULL UNIQUE,
     label TEXT NOT NULL UNIQUE,
@@ -123,7 +123,7 @@ CREATE TABLE activity (
     updated_at TIMESTAMPTZ DEFAULT NULL
 );
 
-CREATE TABLE activity_user (
+CREATE TABLE IF NOT EXISTS activity_user (
     user_id INT REFERENCES "user"(id) ON DELETE CASCADE NOT NULL,
     activity_id INT REFERENCES activity(id) ON DELETE CASCADE NOT NULL,
     calories INT NOT NULL,
@@ -136,14 +136,14 @@ CREATE TABLE activity_user (
 
 -- article section --
 
-CREATE TABLE category_article (
+CREATE TABLE IF NOT EXISTS category_article (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     label TEXT NOT NULL UNIQUE,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NULL
 );
 
-CREATE TABLE article (
+CREATE TABLE IF NOT EXISTS article (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     title TEXT NOT NULL UNIQUE,
     slug TEXT NOT NULL UNIQUE,
@@ -156,14 +156,14 @@ CREATE TABLE article (
     updated_at TIMESTAMPTZ DEFAULT NULL
 );
 
-CREATE TABLE liked_article_user (
+CREATE TABLE IF NOT EXISTS liked_article_user (
     user_id INT REFERENCES "user"(id) ON DELETE CASCADE NOT NULL,
     article_id INT REFERENCES article(id) ON DELETE CASCADE NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NULL
 );
 
-CREATE TABLE comment_article (
+CREATE TABLE IF NOT EXISTS comment_article (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     content TEXT NOT NULL,
     article_id INT REFERENCES article(id) ON DELETE CASCADE NOT NULL,

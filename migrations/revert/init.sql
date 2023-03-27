@@ -3,7 +3,7 @@
 BEGIN;
 
 -- XXX Add DDLs here.
-DROP TABLE comment_article,
+DROP TABLE IF EXISTS comment_article,
 liked_article_user,
 article,
 category_article,
@@ -20,7 +20,7 @@ challenge_user,
 challenge,
 "user";
 
-DROP TYPE product_availability,
+DROP TYPE IF EXISTS product_availability,
 user_profile_visibility,
 user_gender,
 completed_challenge;
