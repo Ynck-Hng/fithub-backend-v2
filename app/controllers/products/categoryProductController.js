@@ -4,7 +4,10 @@ const { CategoryProduct } = require("./../../models");
 const categoryProductController = {
     findAll: async (req, res) => {
         const result = await CategoryProduct.findAll({
-            include: ["products", "company_selling", "company_delivering"]
+            include: {
+                association: "products",
+                include: ["company_selling", "company_delivering"]
+            }
         });
 
         if(!result){
@@ -18,7 +21,10 @@ const categoryProductController = {
         const categoryProductId = req.params.categoryProductId;
 
         const findCategoryProduct = await CategoryProduct.findByPk(categoryProductId, {
-            include: ["products", "company_selling", "company_delivering"]
+            include: {
+                association: "products",
+                include: ["company_selling", "company_delivering"]
+            }
         });
         if(!findCategoryProduct){
             return res.status(404).json("Cette catégorie est introuvable.");

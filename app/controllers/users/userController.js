@@ -45,7 +45,7 @@ const userController = {
     },
 
     createOne: async (req, res) => {
-        const {firstname, lastname, nickname, password, passwordConfirm, email, gender} = req.body;
+        const {firstname, lastname, nickname, phone, password, passwordConfirm, email, gender} = req.body;
 
         if(!firstname || !lastname || !nickname || !password || !passwordConfirm || !email || !gender){
             return res.status(400).json("Veuillez remplir les champs obligatoires.");
@@ -53,7 +53,7 @@ const userController = {
 
         const findUserNickname = await User.findOne({
             where: {
-                nickname: nickname
+                nickname
             }
         });
 
@@ -61,9 +61,15 @@ const userController = {
             return res.status(409).json("Ce pseudo existe déjà.");
         }
 
+        const checkEmail = emailValidator.validate(email);
+
+        if(!checkEmail){
+            return res.status(404).json("L'email saisi est incorrect.");
+        };
+
         const findUserEmail = await User.findOne({
             where: {
-                email: userInfo.email
+                email
             }
         });
 
@@ -71,10 +77,18 @@ const userController = {
             return res.status(409).json("Cet email a déjà été utilisé.");
         }
 
-        const checkEmail = emailValidator.validate(email);
+        if(phone){
+            const findUserPhone = await User.findOne({
+                where: {
+                    phone
+                }
+            });
 
-        if(!checkEmail){
-            return res.status(404).json("L'email saisi est incorrect.");
+            if(findUserPhone){
+                return res.status(409).json("Ce numéro est déjà lié à un compte.");
+            }
+
+            findUser.phone = phone;
         };
 
         const checkPassword = passwordChecker(password);
@@ -104,7 +118,7 @@ const userController = {
 
     updateOne: async (req, res) => {
         const userId = req.params.userId;
-        const {firstname, lastname, nickname, password, email, gender} = req.body;
+        const {firstname, lastname, nickname, phone, password, email, gender} = req.body;
 
         const findUser = await User.findByPk(userId);
 
@@ -118,6 +132,20 @@ const userController = {
 
         if(lastname){
             findUser.lastname = lastname;
+        };
+
+        if(phone){
+            const findUserPhone = await User.findOne({
+                where: {
+                    phone
+                }
+            });
+
+            if(findUserPhone){
+                return res.status(409).json("Ce numéro est déjà lié à un compte.");
+            }
+
+            findUser.phone = phone;
         };
 
         if(nickname){
@@ -217,7 +245,7 @@ const userController = {
             await findUser.removeArticle(findArticle);
 
             return res.status(200).json("Article unliké !");
-            
+
         } 
 
             // ajoute le like

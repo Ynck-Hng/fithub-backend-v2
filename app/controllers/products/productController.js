@@ -5,7 +5,7 @@ const productController = {
 
     findAll: async (req, res) => {
         const result = await Product.findAll({
-            include: ["products", "company_selling", "company_delivering"]
+            include: ["company_selling", "company_delivering"]
         });
 
         if(!result){
@@ -18,7 +18,7 @@ const productController = {
     findOne: async (req, res) => {
         const productId = req.params.productId;
         const findProduct = await Product.findByPk(productId, {
-            include: ["products", "comments_product", "company_selling", "company_delivering"]
+            include: ["company_selling", "company_delivering"]
         });
         if(!findProduct){
             return res.status(404).json("Ce produit est introuvable.");
@@ -27,9 +27,9 @@ const productController = {
     },
 
     createOne: async (req, res) => {
-        const {label, price, availability, category_product_id, company_id, delivery_company_id} = req.body;
+        const {label, availability, category_product_id, company_id, delivery_company_id} = req.body;
         
-        if(!label || !price || !availability || !category_product_id || !company_id || !delivery_company_id){
+        if(!label || !availability || !category_product_id || !company_id || !delivery_company_id){
             return res.status(400).json("Tous les champs sont obligatoires.");
         };
 
@@ -65,7 +65,7 @@ const productController = {
 
     updateOne: async (req, res) => {
         const productId = req.params.productId;
-
+        // attention price
         const {label, price, availability, category_product_id, company_id, delivery_company_id} = req.body;
 
         const findProduct = await Product.findByPk(productId);
