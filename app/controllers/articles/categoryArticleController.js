@@ -6,7 +6,7 @@ const categoryArticleController = {
         //double check
         const result = await CategoryArticle.findAll();
 
-        if(!result){
+        if(result.length === 0){
             return res.status(404).json("Aucune catégorie n'a été trouvée.");
         };
 

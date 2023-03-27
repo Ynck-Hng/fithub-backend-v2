@@ -12,7 +12,7 @@ const userController = {
             },
         });
 
-        if(!result){
+        if(result.length === 0){
             return res.status(404).json("Aucun utilisateur trouvé.");
         };
 
@@ -35,7 +35,7 @@ const userController = {
             ]
         });
 
-        if(!result){
+        if(result.length === 0){
             return res.status(404).json("Cet utilisateur est introuvable.");
         };
 

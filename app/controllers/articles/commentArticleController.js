@@ -14,7 +14,7 @@ const commentArticleController = {
             include: ["users_comments"]
         });
 
-        if(!result){
+        if(result.length === 0){
             return res.status(404).json("Aucun commentaire n'a été posté, soyez le premier !");
         };
         

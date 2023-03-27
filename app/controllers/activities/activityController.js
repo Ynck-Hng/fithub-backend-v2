@@ -7,7 +7,7 @@ const activityController = {
             include: ["users_activities", "categories_activity"]
         });
 
-        if(!result){
+        if(result.length === 0){
             return res.status(404).json("Aucune activité n'a été trouvée.");
         };
 

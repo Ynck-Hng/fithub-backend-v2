@@ -8,7 +8,7 @@ const productController = {
             include: ["company_selling", "company_delivering"]
         });
 
-        if(!result){
+        if(result.length === 0){
             return res.status(404).json("Aucun produit n'a été trouvé.");
         };
 

@@ -7,7 +7,7 @@ const categoryActivityController = {
             include: "activities_category"
         });
 
-        if(!result){
+        if(result.length === 0){
             return res.status(404).json("Aucune catégorie trouvée");
         }
 

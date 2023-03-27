@@ -7,7 +7,7 @@ const articleController = {
             include: ["user_author", "comments_article", "category_article"]
         });
 
-        if(!result){
+        if(result.length === 0){
             return res.status(404).json("Aucun article n'a été trouvé.");
         }
 
@@ -22,7 +22,7 @@ const articleController = {
             include: ["user_author", "comments_article", "category_article"]
         });
 
-        if(!result){
+        if(result.length === 0){
             return res.status(404).json("Aucun article n'a été trouvé.");
         }
 
