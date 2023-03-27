@@ -4,7 +4,7 @@ const { Article, CategoryArticle, User } = require("./../../models");
 const articleController = {
     findAll: async (req, res) => {
         const result = await Article.findAll({
-            include: ["user", "comments_article", "category_article"]
+            include: ["user_author", "comments_article", "category_article"]
         });
 
         if(!result){
@@ -19,7 +19,7 @@ const articleController = {
         const articleId = req.params.articleId;
 
         const result = await Article.findByPk(articleId, {
-            include: ["user", "comments_article", "category_article"]
+            include: ["user_author", "comments_article", "category_article"]
         });
 
         if(!result){
