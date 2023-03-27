@@ -9,10 +9,6 @@ Product.init({
         allowNull: false,
         unique: true
     },
-    price: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-    },
     availability: {
         type: Sequelize.ENUM("disponible", "indisponible", "bientôt"),
         defaultValue: "disponible"

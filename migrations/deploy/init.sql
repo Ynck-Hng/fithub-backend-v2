@@ -64,7 +64,6 @@ CREATE TABLE category_product (
 CREATE TABLE product (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     label TEXT NOT NULL UNIQUE,
-    price FLOAT NOT NULL,
     availability product_availability DEFAULT 'disponible',
     category_product_id INT REFERENCES category_product(id) NOT NULL ON DELETE CASCADE,
     company_id INT REFERENCES company(id) NOT NULL ON DELETE CASCADE,

@@ -32,26 +32,26 @@ User.belongsToMany(Article, {
     through: "liked_article_user",
     foreignKey: "user_id",
     otherKey: "article_id"
-})
+});
 
 Article.belongsToMany(User, {
     as: "users",
     through: "liked_article_user",
     foreignKey: "article_id",
     otherKey: "user_id"
-})
+});
 
 // post
 
 Article.belongsTo(User, {
     as: "user",
     foreignKey: "user_id"
-})
+});
 
 User.hasMany(Article, {
     as: "articles",
     foreignKey: "user_id"
-})
+});
 
 
 // have
@@ -59,24 +59,24 @@ User.hasMany(Article, {
 Article.belongsTo(CategoryArticle, {
     as: "category_article",
     foreignKey: "category_id"
-})
+});
 
 CategoryArticle.hasMany(Article, {
     as: "articles",
     foreignKey: "category_id"
-})
+});
 
 // own
 
 Article.hasMany(CommentArticle, {
     as: "comment_article",
     foreignKey: "article_id",
-})
+});
 
 CommentArticle.belongsTo(Article, {
     as: "article",
     foreignKey: "article_id"
-})
+});
 
 // comment_article_user
 
@@ -85,14 +85,14 @@ User.belongsToMany(CommentArticle, {
     through: "comments_article_user",
     foreignKey: "user_id",
     otherKey: "comment_article_id"
-})
+});
 
 CommentArticle.belongsToMany(User, {
     as: "user",
     through: "comments_article_user",
     foreignKey: "comment_article_id",
     otherKey: "user_id"
-})
+});
 
 // TOP PART DONE
 
@@ -103,14 +103,14 @@ User.belongsToMany(Challenge, {
     through: "challenge_user",
     foreignKey: "user_id",
     otherKey: "challenge_id"
-})
+});
 
 Challenge.belongsToMany(User, {
     as: "users",
     through: "challenge_user",
     foreignKey: "challenge_id",
     otherKey: "user_id"
-})
+});
 
 // activity_user
 
@@ -119,26 +119,26 @@ User.belongsToMany(Activity, {
     through: "activity_user",
     foreignKey: "user_id",
     otherKey: "activity_id"
-})
+});
 
 Activity.belongsToMany(User, {
     as: "users",
     through: "activity_user",
     foreignKey: "activity_id",
     otherKey: "user_id"
-})
+});
 
 // possess
 
 Activity.belongsTo(CategoryActivity, {
     as: "category_activity",
     foreignKey: "category_id"
-})
+});
 
 CategoryActivity.hasMany(Activity, {
     as: "activities",
     foreignKey: "category_id"
-})
+});
 
 // TODO missing achievement
 /*
@@ -191,31 +191,36 @@ CommentProduct.belongsTo(Product, {
 Product.belongsTo(CategoryProduct, {
     as: "category_product",
     foreignKey: "category_product_id"
-})
+});
 
 CategoryProduct.hasMany(Product, {
     as: "products",
     foreignKey: "category_product_id"
-})
+});
 
 // sell
 
 Product.belongsTo(Company, {
     as: "company_selling",
     foreignKey: "company_id"
-})
+});
 
 Company.hasMany(Product, {
     as: "products",
     foreignKey: "company_id"
-})
+});
 
 // deliver
 
 Product.belongsTo(Company, {
     as: "company_delivering",
     foreignKey: "delivery_company_id"
-})
+});
+
+Company.hasMany(Product, {
+    as: "products",
+    foreignKey: "delivery_company_id"
+});
 
 module.exports = {
     Activity,
