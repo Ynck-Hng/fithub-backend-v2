@@ -22,7 +22,12 @@ ChallengeUser.init({
         type: Sequelize.ENUM('yes', 'no'),
         defaultValue: 'no'
     },
-    date_assigned: Sequelize.DATEONLY
+    date_assigned: {
+        type: Sequelize.DATEONLY,
+        allowNull: false
+    },
+    created_at: Sequelize.DATE,
+    updated_at: Sequelize.DATE
 }, {
     sequelize,
     tableName: "challenge_user"

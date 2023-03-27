@@ -128,6 +128,7 @@ CREATE TABLE IF NOT EXISTS activity_user (
     activity_id INT REFERENCES activity(id) ON DELETE CASCADE NOT NULL,
     calories INT NOT NULL,
     duration INT NOT NULL CHECK (duration > 1),
+    date_assigned TEXT DEFAULT TO_CHAR(NOW(), 'YYYY-MM-DD');
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NULL
 );

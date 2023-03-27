@@ -31,7 +31,13 @@ ActivityUser.init({
         validate: {
             isInt: true
         }
-    }
+    },
+    date_assigned: {
+        type: Sequelize.DATEONLY,
+        allowNull: false
+    },
+    created_at: Sequelize.DATE,
+    updated_at: Sequelize.DATE,
 }, {
     sequelize,
     tableName: "activity_user"
