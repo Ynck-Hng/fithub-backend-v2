@@ -238,5 +238,6 @@ module.exports = {
     CategoryProduct,
     Company,
     Challenge,
+    ChallengeUser,
     User
 }

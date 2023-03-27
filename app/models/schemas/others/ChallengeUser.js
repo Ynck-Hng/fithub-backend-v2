@@ -18,10 +18,11 @@ ChallengeUser.init({
             isInt: true
         }
     },
-    date_assigned: {
-        type: Sequelize.DATEONLY,
-        allowNull: false
-    }
+    completed:{
+        type: Sequelize.ENUM('yes', 'no'),
+        defaultValue: 'no'
+    },
+    date_assigned: Sequelize.DATEONLY
 }, {
     sequelize,
     tableName: "challenge_user"

@@ -1,15 +1,15 @@
 const error = require("debug")("error");
-const { Challenge, User } = require("./../../models");
+const { Challenge, User, ChallengeUser } = require("./../../models");
 
 const challengeController = {
     findAll: async (req, res) => {
         const result = await Challenge.findAll();
 
-        if(!result){
-            return res.status(404).json("Aucun challenge n'a été trouvé.");
+        if(result.length === 0){
+            return res.status(404).json("No challenges found.");
         };
 
-        res.json(200).json(result);
+        res.status(200).json(result);
     },
 
     findOne: async (req, res) => {
@@ -18,7 +18,7 @@ const challengeController = {
         const findChallenge = await Challenge.findByPk(challengeId);
         
         if(!findChallenge){
-            return res.status(404).json("Ce challenge est introuvable.");
+            return res.status(404).json("Challenge cannot be found.");
         };
 
         res.status(200).json(findChallenge);
@@ -28,7 +28,7 @@ const challengeController = {
         const {label} = req.body;
 
         if(!label){
-            return res.status(400).json("Le label est obligatoire.");
+            return res.status(400).json("Label is required.");
         };
 
         const findChallengeLabel = await Challenge.findOne({
@@ -38,7 +38,7 @@ const challengeController = {
         });
 
         if(findChallengeLabel){
-            return res.status(409).json("Ce challenge existe déjà.");
+            return res.status(409).json("Challenge already exists.");
         };
 
         const newChallenge = {
@@ -47,7 +47,7 @@ const challengeController = {
 
         await Challenge.create(newChallenge);
 
-        res.status(201).json("Challenge créé !");
+        res.status(201).json("Challenge created !");
     },
 
     updateOne: async (req, res) => {
@@ -58,7 +58,7 @@ const challengeController = {
         const findChallenge = await Challenge.findByPk(challengeId);
         
         if(!findChallenge){
-            return res.status(404).json("Ce challenge est introuvable.");
+            return res.status(404).json("Challenge cannot be found.");
         };
 
         if(label){
@@ -69,7 +69,7 @@ const challengeController = {
             });
 
             if(findChallengeLabel){
-                return res.status(409).json("Ce challenge existe déjà.");
+                return res.status(409).json("Challenge already exists.");
             };
         
             findChallenge.label = label;
@@ -77,7 +77,7 @@ const challengeController = {
 
         await findChallenge.save();
 
-        res.status(200).json("Challenge mis à jour !");
+        res.status(200).json("Challenge updated !");
     },
 
         //user activity where ? 
@@ -87,35 +87,86 @@ const challengeController = {
 
         //check d'abord qu'il n'a pas encore reçu de challenge ajd
 
-        const {userId, currentDate} = req.body;
+        const {userId} = req.body;
         
         //format la date
+        const currentDate = new Date();
         const formattedDate = currentDate.toISOString().slice(0,10);
+        console.log(formattedDate);
         //multiple checks, si on tente de check user + présence challenge
         //ambigû psk on sait pas si user existe du coup
         const findUser = await User.findByPk(userId)
         if(!findUser){
-            return res.status(404).json("Cet utilisateur n'existe pas.");
+            return res.status(404).json("User cannot be found.");
         };
 
+        // random number here
+
+        const findChallengeUserByDate = await ChallengeUser.findOne({
+            where: {
+                date_assigned: formattedDate
+            }
+        });
+
+        if(findChallengeUserByDate){
+            return res.status(409).json("User already received a daily challenge.");
+        };
+
+        const allChallenges = await Challenge.findAll();
+
+        const newUserChallenge = {
+            user_id: userId,
+            challenge_id: allChallenges[0].id,
+            date_assigned: formattedDate
+        }
+
+        await ChallengeUser.create(newUserChallenge);
+
+        res.status(200).json("Challenge created !");
         
         //through date_assigned
 
         //check si total calories > 1000
-
     },
 
-    challengeCompleted: async (req, res) => {
-        // TODO!
-        //vérifier si mm date sinon on le laisse pas faire
+    challengeChecker: async (req, res) => {
 
-    },
+        const userId = req.params.userId;
 
-    challengeUncompleted: async (req, res) => {
-        // TODO!
-        //vérifier si mm date sinon on le laisse pas faire
+        const {challengeId} = req.body;
 
+        const currentDate = new Date();
 
+        const formattedDate = currentDate.toISOString().slice(0, 10);
+
+        const findUser = await User.findByPk(userId);
+        if(!findUser){
+            return res.status(404).json("User cannot be found.");
+        }
+
+        const findChallengeUserByDate = await ChallengeUser.findOne({
+            where: {
+                user_id: userId,
+                challenge_id: challengeId,
+                date_assigned: formattedDate
+            }
+        });
+
+        if(!findChallengeUserByDate){
+            return res.status(404).json("Only current day's challenge can be completed.");
+        };
+
+        switch(findChallengeUserByDate.completed){
+            case 'no':
+                findChallengeUserByDate.completed = 'yes';
+                findChallengeUserByDate.save();
+                break;
+            case 'yes':
+                findChallengeUserByDate.completed = 'no';
+                findChallengeUserByDate.save();
+                break;
+        }
+        res.status(200).json("Challenge completion updated !");
     },
     
     deleteOne: async (req, res) => {
@@ -124,12 +175,12 @@ const challengeController = {
         const findChallenge = await Challenge.findByPk(challengeId);
         
         if(!findChallenge){
-            return res.status(404).json("Ce challenge est introuvable.");
+            return res.status(404).json("Challenge cannot be found.");
         };
 
         await findChallenge.destroy();
 
-        res.status(200).json("Challenge supprimé !");
+        res.status(200).json("Challenge deleted !");
     }
 }
 
