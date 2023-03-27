@@ -12,7 +12,9 @@ const companyController = {
 
     findOne: async (req, res) => {
         const companyId = req.params.companyId;
-        const findCompany = await Company.findByPk(companyId);
+        const findCompany = await Company.findByPk(companyId, {
+            include: ["product_sold", "product_delivered"]
+        });
         if(!findCompany){
             return res.status(200).json("Cette entreprise est introuvable.");
         };

@@ -4,16 +4,11 @@ const { CategoryArticle } = require("./../../models");
 const categoryArticleController = {
     findAll: async (req, res) => {
         //double check
-        const result = await CategoryArticle.findAll({
-            include: {
-                association: "articles",
-                include: "user"
-            }
-        })
+        const result = await CategoryArticle.findAll();
 
         if(!result){
             return res.status(404).json("Aucune catégorie n'a été trouvée.");
-        }
+        };
 
         res.status(200).json(result);
     },
@@ -21,7 +16,12 @@ const categoryArticleController = {
     findOne: async (req, res) => {
         const categoryArticleId = req.params.categoryArticleId;
         
-        const findCategoryArticle = await CategoryArticle.findByPk(categoryArticleId);
+        const findCategoryArticle = await CategoryArticle.findByPk(categoryArticleId, {
+            include: {
+                association: "article_category",
+                include: "user_author"
+            }
+        });
         if(!findCategoryArticle){
             return res.status(404).json("Cette catégorie est introuvable.");
         }

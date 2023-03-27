@@ -49,7 +49,7 @@ Article.belongsTo(User, {
 });
 
 User.hasMany(Article, {
-    as: "article_written",
+    as: "articles_written",
     foreignKey: "user_id"
 });
 
@@ -99,7 +99,7 @@ CommentArticle.belongsToMany(User, {
 // challenge_user
 
 User.belongsToMany(Challenge, {
-    as: "challenges",
+    as: "challenges_users",
     through: "challenge_user",
     foreignKey: "user_id",
     otherKey: "challenge_id"

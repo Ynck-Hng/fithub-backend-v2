@@ -5,7 +5,7 @@ const categoryProductController = {
     findAll: async (req, res) => {
         const result = await CategoryProduct.findAll({
             include: {
-                association: "products",
+                association: "product_categories",
                 include: ["company_selling", "company_delivering"]
             }
         });
@@ -22,7 +22,7 @@ const categoryProductController = {
 
         const findCategoryProduct = await CategoryProduct.findByPk(categoryProductId, {
             include: {
-                association: "products",
+                association: "product_categories",
                 include: ["company_selling", "company_delivering"]
             }
         });

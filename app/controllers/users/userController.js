@@ -10,15 +10,6 @@ const userController = {
             attributes: {
                 exclude: ['password']
             },
-            include: [
-                "articles",
-                "comments_article_user",
-                "challenges",
-                "activities",
-                "comments_product_user",
-                "bought_product_user",
-                "liked_article_user"
-            ]
         });
 
         if(!result){
@@ -34,7 +25,14 @@ const userController = {
         const result = await User.findByPk(userId, {
             attributes: {
                 exclude: ['password']
-            }
+            },
+            include: [
+                "activities_users",
+                "comments_article",
+                "challenges_users",
+                "articles_written",
+                "liked_articles"
+            ]
         });
 
         if(!result){

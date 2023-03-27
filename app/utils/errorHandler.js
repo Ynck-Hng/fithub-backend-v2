@@ -1,6 +1,6 @@
 exports.errorCatcher = (fn) => {
     return (req,res,next) => {
-        return fn(req,res,next).catch(next)
+        return fn(req,res,next).catch(next);
     }
 }
 
@@ -10,7 +10,7 @@ exports.errorCollector = (err, req, res, next) => {
 }
 
 exports.notFound = (req,res,next) => {
-    const err = new Error('Y a R');
+    const err = new Error('Error 404');
     err.status = 404;
     next(err);
 }
