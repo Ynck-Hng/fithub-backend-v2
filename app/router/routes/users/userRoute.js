@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const userController = require("./../../controllers/userController");
-const { errorCatcher } = require("./../../utils/errorHandler");
+const userController = require("./../../../controllers/users/userController");
+const { errorCatcher } = require("./../../../utils/errorHandler");
 
 // Currently on route http://localhost:PORT/user/
 

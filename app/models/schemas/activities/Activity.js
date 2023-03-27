@@ -1,5 +1,5 @@
 const Sequelize = require("sequelize");
-const sequelize = require("./../../data/sequelize");
+const sequelize = require("./../../../data/sequelize");
 
 class Activity extends Sequelize.Model{}
 
@@ -13,7 +13,7 @@ Activity.init({
         type: Sequelize.FLOAT,
         allowNull: false
     },
-    exercise: {
+    label: {
         type: Sequelize.TEXT,
         allowNull: false,
         unique: true

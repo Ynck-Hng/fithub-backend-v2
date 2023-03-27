@@ -13,6 +13,7 @@ CREATE TABLE "user" (
     lastname TEXT NOT NULL,
     nickname TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL,
+    phone TEXT DEFAULT NULL UNIQUE,
     email TEXT NOT NULL UNIQUE,
     gender user_gender DEFAULT 'non-spécifié',
     xp INT DEFAULT 0,
@@ -34,9 +35,9 @@ CREATE TYPE completed_challenge AS ENUM ('yes', 'no');
 
 CREATE TABLE challenge_user (
     user_id INT REFERENCES "user"(id) NOT NULL,
-    challenge_id INT REFERENCES challenge(id) NOT NULL ON DELETE CASCADE,
+    challenge_id INT REFERENCES challenge(id) ON DELETE CASCADE NOT NULL,
     completed completed_challenge DEFAULT 'no',
-    date_assigned DATE DEFAULT (TO_DATE(TO_CHAR(NOW()), 'YYYY-MM-DD')),
+    date_assigned TEXT DEFAULT TO_CHAR(NOW(), 'YYYY MM DD'),
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NULL
 );
@@ -65,8 +66,8 @@ CREATE TABLE product (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     label TEXT NOT NULL UNIQUE,
     availability product_availability DEFAULT 'disponible',
-    category_product_id INT REFERENCES category_product(id) NOT NULL ON DELETE CASCADE,
-    company_id INT REFERENCES company(id) NOT NULL ON DELETE CASCADE,
+    category_product_id INT REFERENCES category_product(id) ON DELETE CASCADE NOT NULL,
+    company_id INT REFERENCES company(id) ON DELETE CASCADE NOT NULL,
     delivery_company_id INT REFERENCES company(id) NOT NULL, -- Default ??? Us maybe ?
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NULL
@@ -117,14 +118,14 @@ CREATE TABLE activity (
     code INT NOT NULL UNIQUE,
     label TEXT NOT NULL UNIQUE,
     met FLOAT NOT NULL,
-    category_activity_id INT REFERENCES category_activity(id) NOT NULL,
+    category_activity_id INT REFERENCES category_activity(id) ON DELETE CASCADE NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NULL
 );
 
 CREATE TABLE activity_user (
-    user_id INT REFERENCES "user"(id) NOT NULL,
-    activity_id INT REFERENCES activity(id) NOT NULL,
+    user_id INT REFERENCES "user"(id) ON DELETE CASCADE NOT NULL,
+    activity_id INT REFERENCES activity(id) ON DELETE CASCADE NOT NULL,
     calories INT NOT NULL,
     duration INT NOT NULL CHECK (duration > 1),
     created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -149,15 +150,15 @@ CREATE TABLE article (
     description TEXT NOT NULL,
     content TEXT NOT NULL,
     upvote INT DEFAULT 0,
-    category_article_id INT REFERENCES category_article(id) NOT NULL,
+    category_article_id INT REFERENCES category_article(id) ON DELETE CASCADE NOT NULL,
     user_id INT REFERENCES "user"(id) NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NULL
 );
 
 CREATE TABLE liked_article_user (
-    user_id INT REFERENCES "user"(id) NOT NULL ON DELETE CASCADE,
-    article_id INT REFERENCES article(id) NOT NULL ON DELETE CASCADE,
+    user_id INT REFERENCES "user"(id) ON DELETE CASCADE NOT NULL,
+    article_id INT REFERENCES article(id) ON DELETE CASCADE NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NULL
 );
@@ -165,14 +166,14 @@ CREATE TABLE liked_article_user (
 CREATE TABLE comment_article (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     content TEXT NOT NULL,
-    article_id INT REFERENCES article(id) NOT NULL,
+    article_id INT REFERENCES article(id) ON DELETE CASCADE NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NULL
 );
 
 CREATE TABLE comment_article_user (
-    comment_article_id INT REFERENCES comment_article(id) NOT NULL,
-    user_id INT REFERENCES "user"(id) NOT NULL,
+    comment_article_id INT REFERENCES comment_article(id) ON DELETE CASCADE NOT NULL,
+    user_id INT REFERENCES "user"(id) ON DELETE CASCADE NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NULL
 );

@@ -1,5 +1,5 @@
 const Sequelize = require("sequelize");
-const sequelize = require("./../../data/sequelize");
+const sequelize = require("./../../../data/sequelize");
 
 class CategoryProduct extends Sequelize.Model{}
 

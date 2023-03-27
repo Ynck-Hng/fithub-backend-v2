@@ -95,8 +95,6 @@ const challengeController = {
 
         //check si total calories > 1000
 
-        
-        
     },
 
     challengeCompleted: async (req, res) => {

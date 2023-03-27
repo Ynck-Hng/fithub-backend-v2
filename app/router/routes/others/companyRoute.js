@@ -1,5 +1,5 @@
 const express = require("express");
-const companyController = require("../../../controllers/articles/companyController");
+const companyController = require("../../../controllers/others/companyController");
 const router = express.Router();
 
 // Currently on route http://localhost:PORT/company/

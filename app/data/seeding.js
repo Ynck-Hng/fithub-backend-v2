@@ -1,8 +1,8 @@
 require("dotenv").config();
 const activities = require("./activities.json");
 const categories = require("./categories.json");
-const Activity = require("./../models/schemas/Activity");
-const { CategoryActivity } = require("../models");
+
+const { Activity ,CategoryActivity } = require("../models");
 //il faudrait require le schéma activities et categories pour faire l'insertion
 
 // ACTIVITY OK 
@@ -17,8 +17,8 @@ async function insertInto(tableName, data){
                 let object = {
                     code: element.code,
                     met: element.met,
-                    category: element.category,
-                    exercise: element.exercise
+                    category_activity_id: element.category_activity_id,
+                    label: element.label
                 }
                 await Activity.create(object);
             }
@@ -36,6 +36,7 @@ async function insertInto(tableName, data){
     }
 }
 
+insertInto("category_activity", categories)
 insertInto("activity", activities);
 // insertInto("category", categories);
 

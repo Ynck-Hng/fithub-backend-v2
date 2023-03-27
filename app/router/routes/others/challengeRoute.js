@@ -1,5 +1,5 @@
 const express = require("express");
-const challengeController = require("../../../controllers/articles/challengeController");
+const challengeController = require("../../../controllers/others/challengeController");
 const router = express.Router();
 
 // Currently on route http://localhost:PORT/challenge/

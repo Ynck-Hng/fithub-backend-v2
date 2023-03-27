@@ -28,14 +28,14 @@ const User = require("./schemas/users/User");
 // liked_article_user
 
 User.belongsToMany(Article, {
-    as: "articles",
+    as: "liked_articles",
     through: "liked_article_user",
     foreignKey: "user_id",
     otherKey: "article_id"
 });
 
 Article.belongsToMany(User, {
-    as: "users",
+    as: "user_liked",
     through: "liked_article_user",
     foreignKey: "article_id",
     otherKey: "user_id"
@@ -44,12 +44,12 @@ Article.belongsToMany(User, {
 // post
 
 Article.belongsTo(User, {
-    as: "user",
+    as: "user_author",
     foreignKey: "user_id"
 });
 
 User.hasMany(Article, {
-    as: "articles",
+    as: "article_written",
     foreignKey: "user_id"
 });
 
@@ -58,37 +58,37 @@ User.hasMany(Article, {
 
 Article.belongsTo(CategoryArticle, {
     as: "category_article",
-    foreignKey: "category_id"
+    foreignKey: "category_article_id"
 });
 
 CategoryArticle.hasMany(Article, {
-    as: "articles",
-    foreignKey: "category_id"
+    as: "article_category",
+    foreignKey: "category_article_id"
 });
 
 // own
 
 Article.hasMany(CommentArticle, {
-    as: "comment_article",
+    as: "comments_article",
     foreignKey: "article_id",
 });
 
 CommentArticle.belongsTo(Article, {
-    as: "article",
+    as: "article_comments",
     foreignKey: "article_id"
 });
 
 // comment_article_user
 
 User.belongsToMany(CommentArticle, {
-    as: "comment_article",
+    as: "comments_article",
     through: "comments_article_user",
     foreignKey: "user_id",
     otherKey: "comment_article_id"
 });
 
 CommentArticle.belongsToMany(User, {
-    as: "user",
+    as: "users_comments",
     through: "comments_article_user",
     foreignKey: "comment_article_id",
     otherKey: "user_id"
@@ -106,7 +106,7 @@ User.belongsToMany(Challenge, {
 });
 
 Challenge.belongsToMany(User, {
-    as: "users",
+    as: "users_challenges",
     through: "challenge_user",
     foreignKey: "challenge_id",
     otherKey: "user_id"
@@ -115,14 +115,14 @@ Challenge.belongsToMany(User, {
 // activity_user
 
 User.belongsToMany(Activity, {
-    as: "activities",
+    as: "activities_users",
     through: "activity_user",
     foreignKey: "user_id",
     otherKey: "activity_id"
 });
 
 Activity.belongsToMany(User, {
-    as: "users",
+    as: "users_activities",
     through: "activity_user",
     foreignKey: "activity_id",
     otherKey: "user_id"
@@ -131,13 +131,13 @@ Activity.belongsToMany(User, {
 // possess
 
 Activity.belongsTo(CategoryActivity, {
-    as: "category_activity",
-    foreignKey: "category_id"
+    as: "categories_activity",
+    foreignKey: "category_activity_id"
 });
 
 CategoryActivity.hasMany(Activity, {
-    as: "activities",
-    foreignKey: "category_id"
+    as: "activities_category",
+    foreignKey: "category_activity_id"
 });
 
 // TODO missing achievement
@@ -194,7 +194,7 @@ Product.belongsTo(CategoryProduct, {
 });
 
 CategoryProduct.hasMany(Product, {
-    as: "products",
+    as: "product_categories",
     foreignKey: "category_product_id"
 });
 
@@ -206,7 +206,7 @@ Product.belongsTo(Company, {
 });
 
 Company.hasMany(Product, {
-    as: "products",
+    as: "product_sold",
     foreignKey: "company_id"
 });
 
@@ -218,7 +218,7 @@ Product.belongsTo(Company, {
 });
 
 Company.hasMany(Product, {
-    as: "products",
+    as: "product_delivered",
     foreignKey: "delivery_company_id"
 });
 

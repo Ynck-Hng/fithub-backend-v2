@@ -1,5 +1,5 @@
 const Sequelize = require("sequelize");
-const sequelize = require("./../../data/sequelize");
+const sequelize = require("./../../../data/sequelize");
 
 class User extends Sequelize.Model{}
 
@@ -22,6 +22,12 @@ User.init({
         type: Sequelize.TEXT,
         allowNull: false,
         unique: true
+    },
+    phone: {
+        type: Sequelize.TEXT,
+        allowNull: true,
+        unique: true,
+        defaultValue: null
     },
     password: {
         type: Sequelize.TEXT,
