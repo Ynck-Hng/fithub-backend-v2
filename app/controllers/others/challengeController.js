@@ -90,7 +90,7 @@ const challengeController = {
         const {userId, currentDate} = req.body;
         
         //format la date
-
+        
         //through date_assigned
 
         //check si total calories > 1000

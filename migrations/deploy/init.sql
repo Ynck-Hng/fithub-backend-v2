@@ -37,7 +37,7 @@ CREATE TABLE challenge_user (
     user_id INT REFERENCES "user"(id) NOT NULL,
     challenge_id INT REFERENCES challenge(id) ON DELETE CASCADE NOT NULL,
     completed completed_challenge DEFAULT 'no',
-    date_assigned TEXT DEFAULT TO_CHAR(NOW(), 'YYYY MM DD'),
+    date_assigned TEXT DEFAULT TO_CHAR(NOW(), 'YYYY-MM-DD'),
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NULL
 );
