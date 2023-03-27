@@ -4,7 +4,7 @@ const { CategoryActivity } = require("./../../models");
 const categoryActivityController = {
     findAll: async (req, res) => {
         const result = await CategoryActivity.findAll({
-            include: "activities"
+            include: "activities_category"
         });
 
         if(!result){
@@ -15,10 +15,10 @@ const categoryActivityController = {
     },
 
     findOne: async (req, res) => {
-        // + ses activités associées
+
         const categoryActivityId = req.params.categoryActivityId;
         const findCategoryActivity = await CategoryActivity.findByPk(categoryActivityId, {
-            include: "activities" //check nom
+            include: "activities_category" 
         });
         
         if(!findCategoryActivity){

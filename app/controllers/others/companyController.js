@@ -4,7 +4,7 @@ const { Company } = require("./../../models");
 const companyController = {
     findAll: async (req, res) => {
         const result = await Company.findAll();
-        if(!result){
+        if(result.length === 0){
             return res.status(404).json("Aucune entreprise n'a été trouvée.");
         };
         res.status(200).json(result);
@@ -16,7 +16,7 @@ const companyController = {
             include: ["product_sold", "product_delivered"]
         });
         if(!findCompany){
-            return res.status(200).json("Cette entreprise est introuvable.");
+            return res.status(404).json("Cette entreprise est introuvable.");
         };
         res.status(200).json(findCompany);
     },

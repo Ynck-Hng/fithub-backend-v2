@@ -47,7 +47,7 @@ const categoryProductController = {
         });
 
         if(findCategoryProductLabel){
-            return res.status(404).json("Cette catégorie est introuvable");
+            return res.status(409).json("Cette catégorie existe déjà.");
         };
 
         const newCategoryProduct = {
@@ -78,7 +78,7 @@ const categoryProductController = {
             });
 
             if(findCategoryProductLabel){
-                return res.status(404).json("Cette catégorie est introuvable");
+                return res.status(409).json("Cette catégorie existe déjà");
             };
 
             findCategoryProduct.label = label;

@@ -25,6 +25,7 @@ Article.init({
     upvote: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        defaultValue: 0
     },
     category_article_id: {
         type: Sequelize.INTEGER,

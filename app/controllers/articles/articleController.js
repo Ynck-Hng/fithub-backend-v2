@@ -77,7 +77,7 @@ const articleController = {
         const findArticle = await Article.findByPk(articleId);
 
         if(!findArticle){
-            return res.status(404).json("Cet article est introuvable");
+            return res.status(404).json("Cet article est introuvable.");
         };
 
         // title and slug will always be together

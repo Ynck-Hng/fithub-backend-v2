@@ -1,5 +1,5 @@
 const error = require("debug")("error");
-const { Challenge } = require("./../../models");
+const { Challenge, User } = require("./../../models");
 
 const challengeController = {
     findAll: async (req, res) => {
@@ -90,6 +90,14 @@ const challengeController = {
         const {userId, currentDate} = req.body;
         
         //format la date
+        const formattedDate = currentDate.toISOString().slice(0,10);
+        //multiple checks, si on tente de check user + présence challenge
+        //ambigû psk on sait pas si user existe du coup
+        const findUser = await User.findByPk(userId)
+        if(!findUser){
+            return res.status(404).json("Cet utilisateur n'existe pas.");
+        };
+
         
         //through date_assigned
 

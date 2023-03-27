@@ -27,7 +27,7 @@ router.use("/category-activity", categoryActivityRoute);
 router.use("/challenge", challengeRoute);
 router.use("/company", companyRoute);
 
-router.use("/product-route", productRoute);
+router.use("/product", productRoute);
 router.use("/comment-product", commentProductRoute);
 router.use("/category-product", categoryProductRoute);
 

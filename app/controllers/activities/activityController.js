@@ -4,7 +4,7 @@ const { Activity, CategoryActivity } = require("./../../models");
 const activityController = {
     findAll: async (req, res) => {
         const result = await Activity.findAll({
-            include: ["user", "category_activity"]
+            include: ["users_activities", "categories_activity"]
         });
 
         if(!result){

@@ -13,7 +13,7 @@ const userController = {
         });
 
         if(!result){
-            return res.status(404).json("Une erreur est survenue...");
+            return res.status(404).json("Aucun utilisateur trouvé.");
         };
 
         res.status(200).json(result);
@@ -57,7 +57,7 @@ const userController = {
 
         if(findUserNickname){
             return res.status(409).json("Ce pseudo existe déjà.");
-        }
+        };
 
         const checkEmail = emailValidator.validate(email);
 
@@ -98,7 +98,6 @@ const userController = {
         if(!checkPassword){
             return res.status(400).json("Sécurisez votre mot de passe avec au moins une majuscule, un symbole et un chiffre.");
         };
-        
         const hashedPassword = bcrypt.hashSync(password, 10);
 
         const newUser = {

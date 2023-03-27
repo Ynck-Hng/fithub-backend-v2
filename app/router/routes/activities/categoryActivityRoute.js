@@ -1,5 +1,5 @@
 const express = require("express");
-const categoryActivityController = require("../../../controllers/activities/categoryActivityController");
+const categoryActivityController = require("./../../../controllers/activities/categoryActivityController");
 const router = express.Router();
 
 // Currently on route http://localhost:PORT/category-activity/

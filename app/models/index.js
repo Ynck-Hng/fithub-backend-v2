@@ -2,6 +2,7 @@
 
 const Activity = require("./schemas/activities/Activity");
 const CategoryActivity = require("./schemas/activities/CategoryActivity");
+const ActivityUser = require("./schemas/activities/ActivityUser");
 
 // articles
 
@@ -16,7 +17,7 @@ const CommentProduct = require("./schemas/products/CommentProduct");
 const CategoryProduct = require("./schemas/products/CategoryProduct");
 
 // others
-
+const ChallengeUser = require("./schemas/others/ChallengeUser");
 const Company = require("./schemas/others/Company");
 const Challenge = require("./schemas/others/Challenge");
 
@@ -80,18 +81,14 @@ CommentArticle.belongsTo(Article, {
 
 // comment_article_user
 
-User.belongsToMany(CommentArticle, {
+User.hasMany(CommentArticle, {
     as: "comments_article",
-    through: "comments_article_user",
     foreignKey: "user_id",
-    otherKey: "comment_article_id"
 });
 
-CommentArticle.belongsToMany(User, {
-    as: "users_comments",
-    through: "comments_article_user",
-    foreignKey: "comment_article_id",
-    otherKey: "user_id"
+CommentArticle.belongsTo(User, {
+    as: "user_comments",
+    foreignKey: "user_id"
 });
 
 // TOP PART DONE
@@ -100,14 +97,18 @@ CommentArticle.belongsToMany(User, {
 
 User.belongsToMany(Challenge, {
     as: "challenges_users",
-    through: "challenge_user",
+    through: {
+        model: ChallengeUser
+    },
     foreignKey: "user_id",
     otherKey: "challenge_id"
 });
 
 Challenge.belongsToMany(User, {
     as: "users_challenges",
-    through: "challenge_user",
+    through: {
+        model: ChallengeUser,
+    },
     foreignKey: "challenge_id",
     otherKey: "user_id"
 });
@@ -116,14 +117,18 @@ Challenge.belongsToMany(User, {
 
 User.belongsToMany(Activity, {
     as: "activities_users",
-    through: "activity_user",
+    through: {
+        model: ActivityUser,
+    },
     foreignKey: "user_id",
     otherKey: "activity_id"
 });
 
 Activity.belongsToMany(User, {
     as: "users_activities",
-    through: "activity_user",
+    through: {
+        model: ActivityUser,
+    },
     foreignKey: "activity_id",
     otherKey: "user_id"
 });

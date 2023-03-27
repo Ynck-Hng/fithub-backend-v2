@@ -3,8 +3,7 @@
 BEGIN;
 
 -- XXX Add DDLs here.
-DROP TABLE comment_article_user,
-comment_article,
+DROP TABLE comment_article,
 liked_article_user,
 article,
 category_article,

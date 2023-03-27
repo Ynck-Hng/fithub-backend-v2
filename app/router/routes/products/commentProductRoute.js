@@ -1,5 +1,5 @@
 const express = require("express");
-const commentProductController = require("../../../controllers/products/commentProductController");
+const commentProductController = require("./../../../controllers/products/commentProductController");
 const router = express.Router();
 
 // Currently on route http://localhost:PORT/comment-product/

@@ -167,12 +167,6 @@ CREATE TABLE comment_article (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     content TEXT NOT NULL,
     article_id INT REFERENCES article(id) ON DELETE CASCADE NOT NULL,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NULL
-);
-
-CREATE TABLE comment_article_user (
-    comment_article_id INT REFERENCES comment_article(id) ON DELETE CASCADE NOT NULL,
     user_id INT REFERENCES "user"(id) ON DELETE CASCADE NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NULL

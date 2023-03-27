@@ -6,16 +6,19 @@ const { CommentArticle, Article, User } = require("./../../models");
 const commentArticleController = {
     findAllArticleComments: async (req, res) => {
         const articleId = req.params.articleId;
+        console.log(articleId);
         const result = await CommentArticle.findAll({
             where: {
                 article_id: articleId
-            }
+            },
+            include: ["users_comments"]
         });
 
         if(!result){
             return res.status(404).json("Aucun commentaire n'a été posté, soyez le premier !");
         };
         
+        res.status(200).json(result);
     },
 
     createOne: async (req, res) => {
@@ -28,7 +31,7 @@ const commentArticleController = {
         const findArticle = await Article.findByPk(article_id);
 
         if(!findArticle){
-            return res.status(404).json("Cet article est introuvable");
+            return res.status(404).json("Cet article est introuvable.");
         };
 
         const findUser = await User.findByPk(user_id);
@@ -43,12 +46,11 @@ const commentArticleController = {
 
         const newCommentData = {
             content,
-            article_id
+            article_id,
+            user_id
         }
 
         const newCreatedComment = await CommentArticle.create(newCommentData);
-
-        await newCreatedComment.addUser(findUser);
 
         res.status(200).json("Comment created !");
     },

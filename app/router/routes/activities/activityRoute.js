@@ -1,8 +1,8 @@
 const express = require("express");
-const activityController = require("../../../controllers/activities/activityController");
+const activityController = require("./../../../controllers/activities/activityController");
 const router = express.Router();
 
-// Currently on route http://localhost:PORT/activity
+// Currently on route http://localhost:PORT/activity/
 
 router.get("/", activityController.findAll);
 router.get("/:activityId", activityController.findOne);

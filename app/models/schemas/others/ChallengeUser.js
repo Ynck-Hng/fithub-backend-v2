@@ -1,32 +1,30 @@
 const Sequelize = require("sequelize");
 const sequelize = require("./../../../data/sequelize");
 
-class CommentArticle extends Sequelize.Model{}
+class ChallengeUser extends Sequelize.Model{}
 
-CommentArticle.init({
-    content: {
-        type: Sequelize.TEXT,
-        allowNull: false,
-    },
-    article_id: {
+ChallengeUser.init({
+    user_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         validate: {
             isInt: true
         }
     },
-    user_id:{
+    challenge_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         validate: {
             isInt: true
         }
     },
-    created_at: Sequelize.DATE,
-    updated_at: Sequelize.DATE
+    date_assigned: {
+        type: Sequelize.DATEONLY,
+        allowNull: false
+    }
 }, {
     sequelize,
-    tableName: "comment_article"
+    tableName: "challenge_user"
 })
 
-module.exports = CommentArticle;
+module.exports = ChallengeUser;

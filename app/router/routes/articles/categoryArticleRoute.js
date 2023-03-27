@@ -1,5 +1,5 @@
 const express = require("express");
-const categoryArticleController = require("../../../controllers/articles/categoryArticleController");
+const categoryArticleController = require("./../../../controllers/articles/categoryArticleController");
 const router = express.Router();
 
 // Currently on route http://localhost:PORT/category-article/
