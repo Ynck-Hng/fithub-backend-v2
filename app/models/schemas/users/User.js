@@ -57,7 +57,7 @@ User.init({
     updated_at: Sequelize.DATE
 }, {
     sequelize,
-    tableName: "`user`"
+    tableName: "user"
 })
 
 module.exports = User;
