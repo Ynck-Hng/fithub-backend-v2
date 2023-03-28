@@ -52,6 +52,8 @@ const articleController = {
             return res.status(404).json("User cannot be found.");
         };
         
+        // à réfléchir implémentation de plusieurs catégories
+
         const findCategory = await CategoryArticle.findByPk(category_article_id);
         
         if(!findCategory){
@@ -73,7 +75,7 @@ const articleController = {
 
     updateOne: async (req, res) => {
         const articleId = req.params.articleId;
-        const {title, description, content, upvote, category_article_id} = req.body;
+        const {title, description, content, upvote} = req.body;
 
         const findArticle = await Article.findByPk(articleId);
 
@@ -111,20 +113,6 @@ const articleController = {
             findArticle.upvote = upvote;
         };
 
-        if(category_article_id){
-            const findCategoryArticle = await CategoryArticle.findByPk(category_article_id);
-
-            if(!findCategoryArticle){
-                return res.status(404).json("Category cannot be found.");
-            }
-
-            //findArticle.category_article_id = category_article_id;
-
-            // check si + de 4 categories déjà et si y a pas de doublons
-
-            await Article.addCategoryArticle(findCategory);
-        };
-
         await findArticle.save();
 
         return res.status(200).json("Article updated !");
@@ -143,7 +131,47 @@ const articleController = {
         await findArticle.destroy();
 
         return res.status(200).json("Article deleted !");
-    }
+    },
+
+    //TODO! A TESTER
+
+    likedArticle: async (req, res) => {
+        const {userId, articleId} = req.body;
+
+        const findUser = await User.findByPk(userId);
+        const findArticle = await Article.findByPk(articleId);
+
+        if(!findUser || !findArticle){
+            return res.status(404).json("User cannot be found.");
+        }
+
+        const findUserLikedArticle = await User.findByPk(userId, {
+            include: {
+                association: "liked_article_user",
+                where: {
+                    article_id: articleId
+                }
+            }
+        });
+
+        if(findUserLikedArticle){
+
+            // retire le like
+
+            await findUser.removeArticle(findArticle);
+
+            return res.status(200).json("Article unliked !");
+
+        } 
+        
+            // ajoute le like
+
+        await findUser.addArticle(findArticle);
+
+        res.status(200).json("Article liked !");
+        
+    },
+
 }
 
 module.exports = articleController;

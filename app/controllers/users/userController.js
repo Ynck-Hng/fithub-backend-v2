@@ -221,43 +221,6 @@ const userController = {
 
     // /like route maybe ??
 
-    likedArticle: async (req, res) => {
-        const {userId, articleId} = req.body;
-
-        const findUser = await User.findByPk(userId);
-        const findArticle = await Article.findByPk(articleId);
-
-        if(!findUser || !findArticle){
-            return res.status(404).json("User cannot be found.");
-        }
-
-        const findUserLikedArticle = await User.findByPk(userId, {
-            include: {
-                association: "liked_article_user",
-                where: {
-                    article_id: articleId
-                }
-            }
-        });
-
-        if(findUserLikedArticle){
-
-            // retire le like
-
-            await findUser.removeArticle(findArticle);
-
-            return res.status(200).json("Article unliked !");
-
-        } 
-        
-            // ajoute le like
-
-        await findUser.addArticle(findArticle);
-
-        res.status(200).json("Article liked !");
-        
-    },
-
     login: async (req, res) => {
         //TODO! IL FAUT IMPLEMENTER JWT ICI AUSSI
     },
