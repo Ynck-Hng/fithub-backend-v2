@@ -20,7 +20,8 @@ challenge_user,
 challenge,
 "user";
 
-DROP TYPE IF EXISTS product_availability,
+DROP TYPE IF EXISTS user_role,
+product_availability,
 user_profile_visibility,
 user_gender,
 completed_challenge;

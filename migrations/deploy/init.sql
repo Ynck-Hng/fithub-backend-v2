@@ -4,8 +4,9 @@ BEGIN;
 
 -- XXX Add DDLs here.
 
-CREATE TYPE IF NOT EXISTS user_gender AS ENUM ('femme', 'homme', 'non-spécifié');
-CREATE TYPE IF NOT EXISTS user_profile_visibility AS ENUM ('publique', 'privé');
+CREATE TYPE user_gender AS ENUM ('femme', 'homme', 'non-spécifié');
+CREATE TYPE user_profile_visibility AS ENUM ('publique', 'privé');
+CREATE TYPE user_role AS ENUM ('user', 'admin');
 
 CREATE TABLE IF NOT EXISTS "user" (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -15,6 +16,7 @@ CREATE TABLE IF NOT EXISTS "user" (
     password TEXT NOT NULL,
     phone TEXT DEFAULT NULL UNIQUE,
     login_streak INTEGER DEFAULT 0,
+    role user_role DEFAULT 'user',
     email TEXT NOT NULL UNIQUE,
     gender user_gender DEFAULT 'non-spécifié',
     xp INT DEFAULT 0,
@@ -32,7 +34,7 @@ CREATE TABLE IF NOT EXISTS challenge (
     updated_at TIMESTAMPTZ DEFAULT NULL
 );
 
-CREATE TYPE IF NOT EXISTS completed_challenge AS ENUM ('yes', 'no');
+CREATE TYPE completed_challenge AS ENUM ('yes', 'no');
 
 CREATE TABLE IF NOT EXISTS challenge_user (
     user_id INT REFERENCES "user"(id) NOT NULL,
@@ -47,7 +49,7 @@ CREATE TABLE IF NOT EXISTS challenge_user (
 
 -- Product section --
 
-CREATE TYPE IF NOT EXISTS product_availability AS ENUM ('disponible', 'indisponible', 'bientôt');
+CREATE TYPE product_availability AS ENUM ('disponible', 'indisponible', 'bientôt');
 
 CREATE TABLE IF NOT EXISTS company (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -129,7 +131,7 @@ CREATE TABLE IF NOT EXISTS activity_user (
     activity_id INT REFERENCES activity(id) ON DELETE CASCADE NOT NULL,
     calories INT NOT NULL,
     duration INT NOT NULL CHECK (duration > 1),
-    date_assigned TEXT DEFAULT TO_CHAR(NOW(), 'YYYY-MM-DD');
+    date_assigned TEXT DEFAULT TO_CHAR(NOW(), 'YYYY-MM-DD'),
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NULL
 );
