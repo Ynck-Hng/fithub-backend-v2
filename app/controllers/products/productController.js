@@ -5,7 +5,7 @@ const productController = {
 
     findAll: async (req, res) => {
         const result = await Product.findAll({
-            include: ["company_selling", "company_delivering"]
+            include: ["CompanySelling", "CompanyDelivering"]
         });
 
         if(result.length === 0){
@@ -18,7 +18,7 @@ const productController = {
     findOne: async (req, res) => {
         const productId = req.params.productId;
         const findProduct = await Product.findByPk(productId, {
-            include: ["company_selling", "company_delivering"]
+            include: ["CompanySelling", "CompanyDelivering"]
         });
         if(!findProduct){
             return res.status(404).json("Product cannot be found.");

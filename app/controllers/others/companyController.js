@@ -12,9 +12,11 @@ const companyController = {
 
     findOne: async (req, res) => {
         const companyId = req.params.companyId;
+
         const findCompany = await Company.findByPk(companyId, {
-            include: ["product_sold", "product_delivered"]
+            include: ["ProductSold", "ProductDelivered"]
         });
+
         if(!findCompany){
             return res.status(404).json("Company cannot be found.");
         };
@@ -44,7 +46,7 @@ const companyController = {
 
         await Company.create(newCompany);
 
-        res.status(201).json("Entreprise ajoutée !");
+        res.status(201).json("Company created !");
     },
 
     updateOne: async (req, res) => {

@@ -27,10 +27,6 @@ Article.init({
         allowNull: false,
         defaultValue: 0
     },
-    category_article_id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-    },
     user_id: {
         type: Sequelize.INTEGER,
         allowNull: false,

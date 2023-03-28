@@ -29,14 +29,14 @@ const User = require("./schemas/users/User");
 // liked_article_user
 
 User.belongsToMany(Article, {
-    as: "liked_articles",
+    as: "LikedArticles",
     through: "liked_article_user",
     foreignKey: "user_id",
     otherKey: "article_id"
 });
 
 Article.belongsToMany(User, {
-    as: "user_liked",
+    as: "UserLiked",
     through: "liked_article_user",
     foreignKey: "article_id",
     otherKey: "user_id"
@@ -45,49 +45,53 @@ Article.belongsToMany(User, {
 // post
 
 Article.belongsTo(User, {
-    as: "user_author",
+    as: "UserAuthor",
     foreignKey: "user_id"
 });
 
 User.hasMany(Article, {
-    as: "articles_written",
+    as: "ArticlesWritten",
     foreignKey: "user_id"
 });
 
 
 // have
 
-Article.belongsTo(CategoryArticle, {
-    as: "category_article",
-    foreignKey: "category_article_id"
+CategoryArticle.belongsToMany(Article, {
+    as: "ArticlesCategory",
+    through: "assigned_category_article",
+    foreignKey: "category_article_id",
+    otherKey: "article_id"
 });
 
-CategoryArticle.hasMany(Article, {
-    as: "article_category",
-    foreignKey: "category_article_id"
+Article.belongsToMany(CategoryArticle, {
+    as: "CategoriesArticle",
+    through: "assigned_category_article",
+    foreignKey: "article_id",
+    otherKey: "category_article_id"
 });
 
 // own
 
 Article.hasMany(CommentArticle, {
-    as: "comments_article",
+    as: "CommentsArticle",
     foreignKey: "article_id",
 });
 
 CommentArticle.belongsTo(Article, {
-    as: "article_comments",
+    as: "ArticleComments",
     foreignKey: "article_id"
 });
 
 // comment_article_user
 
 User.hasMany(CommentArticle, {
-    as: "comments_article",
+    as: "CommentsUser",
     foreignKey: "user_id",
 });
 
 CommentArticle.belongsTo(User, {
-    as: "user_comments",
+    as: "UserComments",
     foreignKey: "user_id"
 });
 
@@ -96,7 +100,7 @@ CommentArticle.belongsTo(User, {
 // challenge_user
 
 User.belongsToMany(Challenge, {
-    as: "challenges_users",
+    as: "ChallengesUser",
     through: {
         model: ChallengeUser
     },
@@ -105,7 +109,7 @@ User.belongsToMany(Challenge, {
 });
 
 Challenge.belongsToMany(User, {
-    as: "users_challenges",
+    as: "UsersChallenges",
     through: {
         model: ChallengeUser,
     },
@@ -116,7 +120,7 @@ Challenge.belongsToMany(User, {
 // activity_user
 
 User.belongsToMany(Activity, {
-    as: "activities_users",
+    as: "ActivitiesUsers",
     through: {
         model: ActivityUser,
     },
@@ -125,7 +129,7 @@ User.belongsToMany(Activity, {
 });
 
 Activity.belongsToMany(User, {
-    as: "users_activities",
+    as: "UsersActivities",
     through: {
         model: ActivityUser,
     },
@@ -136,12 +140,12 @@ Activity.belongsToMany(User, {
 // possess
 
 Activity.belongsTo(CategoryActivity, {
-    as: "categories_activity",
+    as: "CategoriesActivity",
     foreignKey: "category_activity_id"
 });
 
 CategoryActivity.hasMany(Activity, {
-    as: "activities_category",
+    as: "ActivitiesCategory",
     foreignKey: "category_activity_id"
 });
 
@@ -194,36 +198,36 @@ CommentProduct.belongsTo(Product, {
 // belong 
 
 Product.belongsTo(CategoryProduct, {
-    as: "category_product",
+    as: "CategoryProduct",
     foreignKey: "category_product_id"
 });
 
 CategoryProduct.hasMany(Product, {
-    as: "product_categories",
+    as: "ProductCategories",
     foreignKey: "category_product_id"
 });
 
 // sell
 
 Product.belongsTo(Company, {
-    as: "company_selling",
+    as: "CompanySelling",
     foreignKey: "company_id"
 });
 
 Company.hasMany(Product, {
-    as: "product_sold",
+    as: "ProductSold",
     foreignKey: "company_id"
 });
 
 // deliver
 
 Product.belongsTo(Company, {
-    as: "company_delivering",
+    as: "CompanyDelivering",
     foreignKey: "delivery_company_id"
 });
 
 Company.hasMany(Product, {
-    as: "product_delivered",
+    as: "ProductDelivered",
     foreignKey: "delivery_company_id"
 });
 

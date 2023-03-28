@@ -5,6 +5,7 @@ BEGIN;
 -- XXX Add DDLs here.
 DROP TABLE IF EXISTS comment_article,
 liked_article_user,
+assigned_category_article,
 article,
 category_article,
 activity_user,

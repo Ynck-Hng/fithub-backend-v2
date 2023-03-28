@@ -6,7 +6,7 @@ const categoryProductController = {
         const result = await CategoryProduct.findAll({
             include: {
                 association: "product_categories",
-                include: ["company_selling", "company_delivering"]
+                include: ["CompanySelling", "CompanyDelivering"]
             }
         });
 
@@ -23,7 +23,7 @@ const categoryProductController = {
         const findCategoryProduct = await CategoryProduct.findByPk(categoryProductId, {
             include: {
                 association: "product_categories",
-                include: ["company_selling", "company_delivering"]
+                include: ["CompanySelling", "CompanyDelivering"]
             }
         });
         if(!findCategoryProduct){

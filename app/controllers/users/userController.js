@@ -27,11 +27,11 @@ const userController = {
                 exclude: ['password']
             },
             include: [
-                "activities_users",
-                "comments_article",
-                "challenges_users",
-                "articles_written",
-                "liked_articles"
+                "AcitivitiesUsers",
+                "CommentsArticle",
+                "ChallengesUser",
+                "ArticlesWritten",
+                "LikedArticles"
             ]
         });
 
@@ -249,7 +249,7 @@ const userController = {
             return res.status(200).json("Article unliked !");
 
         } 
-
+        
             // ajoute le like
 
         await findUser.addArticle(findArticle);

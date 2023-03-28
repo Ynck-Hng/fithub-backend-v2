@@ -18,8 +18,8 @@ const categoryArticleController = {
         
         const findCategoryArticle = await CategoryArticle.findByPk(categoryArticleId, {
             include: {
-                association: "article_category",
-                include: "user_author"
+                association: "ArticlesCategory",
+                include: "UserAuthor"
             }
         });
         if(!findCategoryArticle){
@@ -48,7 +48,7 @@ const categoryArticleController = {
 
         await CategoryArticle.create({label});
 
-        res.status(201).json("Catégorie créée !");
+        res.status(201).json("Category created !");
     },
 
     updateOne: async (req, res) => {

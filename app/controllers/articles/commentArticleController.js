@@ -11,7 +11,7 @@ const commentArticleController = {
             where: {
                 article_id: articleId
             },
-            include: ["users_comments"]
+            include: ["UserComments"]
         });
 
         if(result.length === 0){

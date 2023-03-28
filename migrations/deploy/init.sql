@@ -154,8 +154,14 @@ CREATE TABLE IF NOT EXISTS article (
     description TEXT NOT NULL,
     content TEXT NOT NULL,
     upvote INT DEFAULT 0,
-    category_article_id INT REFERENCES category_article(id) ON DELETE CASCADE NOT NULL,
     user_id INT REFERENCES "user"(id) NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NULL
+);
+
+CREATE TABLE IF NOT EXISTS assigned_category_article (
+    article_id INT REFERENCES article(id) ON DELETE CASCADE NOT NULL,
+    category_article_id INT REFERENCES category_article(id) ON DELETE CASCADE NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NULL
 );

@@ -4,7 +4,7 @@ const { Article, CategoryArticle, User } = require("./../../models");
 const articleController = {
     findAll: async (req, res) => {
         const result = await Article.findAll({
-            include: ["user_author", "comments_article", "category_article"]
+            include: ["UserAuthor", "CommentsArticle", "CategoriesArticle"]
         });
 
         if(result.length === 0){
@@ -17,9 +17,9 @@ const articleController = {
     findOne: async (req, res) => {
 
         const articleId = req.params.articleId;
-
+        console.log(req.params.articleId);
         const result = await Article.findByPk(articleId, {
-            include: ["user_author", "comments_article", "category_article"]
+            include: ["UserAuthor", "CommentsArticle", "CategoriesArticle"]
         });
 
         if(!result){
@@ -46,26 +46,27 @@ const articleController = {
             return res.status(409).json("Title already exists.");
         };
 
-        const findCategory = await CategoryArticle.findByPk(category_article_id);
-
-        if(!findCategory){
-            return res.status(404).json("Category cannot be found.");
-        };
-
         const findUser = await User.findByPk(user_id);
 
         if(!findUser){
             return res.status(404).json("User cannot be found.");
         };
+        
+        const findCategory = await CategoryArticle.findByPk(category_article_id);
+        
+        if(!findCategory){
+            return res.status(404).json("Category cannot be found.");
+        };
 
-        await Article.create({
+        const newArticle = await Article.create({
             title,
             slug,
             description,
             content,
-            category_article_id,
-            user_id
+            user_id, 
         })
+
+        await newArticle.addCategoriesArticle(findCategory);
 
         res.status(201).json("Article created !");
     },
@@ -117,7 +118,11 @@ const articleController = {
                 return res.status(404).json("Category cannot be found.");
             }
 
-            findArticle.category_article_id = category_article_id;
+            //findArticle.category_article_id = category_article_id;
+
+            // check si + de 4 categories déjà et si y a pas de doublons
+
+            await Article.addCategoryArticle(findCategory);
         };
 
         await findArticle.save();
