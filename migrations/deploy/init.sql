@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS "user" (
     nickname TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL,
     phone TEXT DEFAULT NULL UNIQUE,
+    login_streak INTEGER DEFAULT 0,
     email TEXT NOT NULL UNIQUE,
     gender user_gender DEFAULT 'non-spécifié',
     xp INT DEFAULT 0,

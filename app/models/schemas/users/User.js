@@ -29,6 +29,11 @@ User.init({
         unique: true,
         defaultValue: null
     },
+    login_streak: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 0
+    },
     password: {
         type: Sequelize.TEXT,
         allowNull: false,
