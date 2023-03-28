@@ -11,7 +11,7 @@ const categoryProductController = {
         });
 
         if(result.length === 0){
-            return res.status(404).json("Aucune catégorie n'a été trouvée");
+            return res.status(404).json("Category cannot be found.");
         };
 
         res.status(200).json(result);
@@ -27,7 +27,7 @@ const categoryProductController = {
             }
         });
         if(!findCategoryProduct){
-            return res.status(404).json("Cette catégorie est introuvable.");
+            return res.status(404).json("Category cannot be found.");
         };
 
         res.status(200).json(findCategoryProduct);
@@ -37,7 +37,7 @@ const categoryProductController = {
         const {label} = req.body;
 
         if(!label){
-            return res.status(400).json("Le label est obligatoire.");
+            return res.status(400).json("Label is required.");
         };
 
         const findCategoryProductLabel = await CategoryProduct.findOne({
@@ -47,7 +47,7 @@ const categoryProductController = {
         });
 
         if(findCategoryProductLabel){
-            return res.status(409).json("Cette catégorie existe déjà.");
+            return res.status(409).json("Category already exists.");
         };
 
         const newCategoryProduct = {
@@ -56,7 +56,7 @@ const categoryProductController = {
 
         await CategoryProduct.create(newCategoryProduct);
 
-        res.status(201).json("Catégorie créée !");
+        res.status(201).json("Category created !");
 
     },
 
@@ -67,7 +67,7 @@ const categoryProductController = {
         const findCategoryProduct = await CategoryProduct.findByPk(categoryProductId);
 
         if(!findCategoryProduct){
-            return res.status(404).json("Cette catégorie est introuvable.");
+            return res.status(404).json("Category cannot be found.");
         };
 
         if(label){
@@ -78,7 +78,7 @@ const categoryProductController = {
             });
 
             if(findCategoryProductLabel){
-                return res.status(409).json("Cette catégorie existe déjà");
+                return res.status(409).json("Category already exists.");
             };
 
             findCategoryProduct.label = label;
@@ -86,7 +86,7 @@ const categoryProductController = {
 
         await findCategoryProduct.save();
 
-        res.status(200).json("Catégorie mise à jour !");
+        res.status(200).json("Category updated !");
     },
     
     deleteOne: async (req, res) => {
@@ -95,12 +95,12 @@ const categoryProductController = {
         const findCategoryProduct = await CategoryProduct.findByPk(categoryProductId);
 
         if(!findCategoryProduct){
-            return res.status(404).json("Cette catégorie est introuvable.");
+            return res.status(404).json("Category cannot be found.");
         };
 
         await findCategoryProduct.destroy();
 
-        res.status(200).json("Catégorie supprimée !");
+        res.status(200).json("Category deleted !");
     }
 }
 

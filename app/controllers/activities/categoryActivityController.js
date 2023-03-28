@@ -8,7 +8,7 @@ const categoryActivityController = {
         });
 
         if(result.length === 0){
-            return res.status(404).json("Aucune catégorie trouvée");
+            return res.status(404).json("Category cannot be found.");
         }
 
         res.status(200).json(result);
@@ -22,7 +22,7 @@ const categoryActivityController = {
         });
         
         if(!findCategoryActivity){
-            return res.status(404).json("Cette catégorie est introuvable.");
+            return res.status(404).json("Category cannot be found.");
         }
 
         res.status(200).json(findCategoryActivity);
@@ -38,7 +38,7 @@ const categoryActivityController = {
         });
 
         if(findCategoryActivityLabel){
-            return res.status(409).json("Ce label est déjà utilisé.");
+            return res.status(409).json("Label already exists.");
         };
 
         const newLabel = {
@@ -47,7 +47,7 @@ const categoryActivityController = {
 
         await CategoryActivity.create(newLabel);
 
-        res.status(201).json("Catégorie créée !");
+        res.status(201).json("Category created !");
     },
 
     updateOne: async (req, res) => {
@@ -57,7 +57,7 @@ const categoryActivityController = {
         const findCategoryActivity = await CategoryActivity.findByPk(categoryActivityId);
 
         if(!findCategoryActivity){
-            return res.status(404).json("Cette catégorie est introuvable.");
+            return res.status(404).json("Category cannot be found.");
         };
 
         if(label){
@@ -68,7 +68,7 @@ const categoryActivityController = {
             });
             
             if(findCategoryActivityLabel){
-                return res.status(409).json("Ce label est déjà utilisé.");
+                return res.status(409).json("Label already exists.");
             };
 
             findCategoryActivity.label = label;
@@ -76,7 +76,7 @@ const categoryActivityController = {
 
         await findCategoryActivity.save();
 
-        res.status(200).json("Catégorie mise à jour !");
+        res.status(200).json("Category updated !");
     },
     
     deleteOne: async (req, res) => {
@@ -85,12 +85,12 @@ const categoryActivityController = {
         const findCategoryActivity = await CategoryActivity.findByPk(categoryActivityId);
 
         if(!findCategoryActivity){
-            return res.status(404).json("Cette catégorie est introuvable.");
+            return res.status(404).json("Category cannot be found.");
         };
 
         await findCategoryActivity.destroy();
 
-        res.status(200).json("Catégorie supprimée !");
+        res.status(200).json("Category deleted !");
     }
 }
 

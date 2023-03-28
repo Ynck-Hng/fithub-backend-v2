@@ -8,7 +8,7 @@ const articleController = {
         });
 
         if(result.length === 0){
-            return res.status(404).json("Aucun article n'a été trouvé.");
+            return res.status(404).json("Article cannot be found.");
         }
 
         res.status(200).json(result);
@@ -22,8 +22,8 @@ const articleController = {
             include: ["user_author", "comments_article", "category_article"]
         });
 
-        if(result.length === 0){
-            return res.status(404).json("Aucun article n'a été trouvé.");
+        if(!result){
+            return res.status(404).json("Article cannot be found.");
         }
 
         res.status(200).json(result);
@@ -33,7 +33,7 @@ const articleController = {
         const {title, slug, description, content, category_article_id, user_id} = req.body;
 
         if(!title || !slug || !description || !content || !category_article_id){
-            return res.status(400).json("Le titre, la description, le contenu et la catégorie sont obligatoires.");
+            return res.status(400).json("Title, description, content and category are required.");
         }
 
         const findArticleTitle = await Article.findOne({
@@ -43,19 +43,19 @@ const articleController = {
         });
 
         if(findArticleTitle){
-            return res.status(409).json("Ce titre d'article est déjà utilisé.");
+            return res.status(409).json("Title already exists.");
         };
 
         const findCategory = await CategoryArticle.findByPk(category_article_id);
 
         if(!findCategory){
-            return res.status(404).json("La catégorie recherchée est introuvable.");
+            return res.status(404).json("Category cannot be found.");
         };
 
         const findUser = await User.findByPk(user_id);
 
         if(!findUser){
-            return res.status(404).json("Cet utilisateur est introuvable.");
+            return res.status(404).json("User cannot be found.");
         };
 
         await Article.create({
@@ -67,7 +67,7 @@ const articleController = {
             user_id
         })
 
-        res.status(201).json("Article créé !");
+        res.status(201).json("Article created !");
     },
 
     updateOne: async (req, res) => {
@@ -77,7 +77,7 @@ const articleController = {
         const findArticle = await Article.findByPk(articleId);
 
         if(!findArticle){
-            return res.status(404).json("Cet article est introuvable.");
+            return res.status(404).json("Article cannot be found.");
         };
 
         // title and slug will always be together
@@ -92,7 +92,7 @@ const articleController = {
             });
 
             if(findArticleTitle){
-                return res.status(409).json("Ce titre est déjà utilisé.");
+                return res.status(409).json("Title already exists.");
             };
             findArticle.title = title;
             findArticle.slug = title.replaceAll(" ", "-");
@@ -114,7 +114,7 @@ const articleController = {
             const findCategoryArticle = await CategoryArticle.findByPk(category_article_id);
 
             if(!findCategoryArticle){
-                return res.status(404).json("Cette catégorie est introuvable.");
+                return res.status(404).json("Category cannot be found.");
             }
 
             findArticle.category_article_id = category_article_id;
@@ -122,7 +122,7 @@ const articleController = {
 
         await findArticle.save();
 
-        return res.status(200).json("Article modifié !");
+        return res.status(200).json("Article updated !");
 
     },
     
@@ -132,12 +132,12 @@ const articleController = {
         const findArticle = await Article.findByPk(articleId);
 
         if(!findArticle){
-            return res.status(404).json("Cet article est introuvable.");
+            return res.status(404).json("Article cannot be found.");
         };
 
         await findArticle.destroy();
 
-        return res.status(200).json("Article supprimé !");
+        return res.status(200).json("Article deleted !");
     }
 }
 

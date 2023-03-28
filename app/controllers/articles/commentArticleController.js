@@ -15,7 +15,7 @@ const commentArticleController = {
         });
 
         if(result.length === 0){
-            return res.status(404).json("Aucun commentaire n'a été posté, soyez le premier !");
+            return res.status(404).json("No comments found, be the first !");
         };
         
         res.status(200).json(result);
@@ -25,23 +25,23 @@ const commentArticleController = {
         const {content, article_id, user_id} = req.body;
 
         if(!content || !article_id || !user_id){
-            return res.status(400).json("Le contenu, l'article et l'utilisateur sont obligatoires.");
+            return res.status(400).json("Content, article_id and user_id are required.");
         };
         
         const findArticle = await Article.findByPk(article_id);
 
         if(!findArticle){
-            return res.status(404).json("Cet article est introuvable.");
+            return res.status(404).json("Article cannot be found.");
         };
 
         const findUser = await User.findByPk(user_id);
 
         if(!findUser){
-            return res.status(404).json("Cet utilisateur est introuvable");
+            return res.status(404).json("User cannot be found.");
         };
 
         if(!content){
-            return res.status(400).json("Le contenu ne peut être vide.");
+            return res.status(400).json("Content cannot be empty.");
         };
 
         const newCommentData = {
@@ -62,7 +62,7 @@ const commentArticleController = {
         const findCommentArticle = await CommentArticle.findByPk(commentArticleId);
 
         if(!findCommentArticle){
-            return res.status(404).json("Ce commentaire est introuvable.");
+            return res.status(404).json("Comment cannot be found.");
         }
 
         if(content){
@@ -71,7 +71,7 @@ const commentArticleController = {
 
         await findCommentArticle.save();
 
-        res.status(200).json("Commentaire mis à jour !");
+        res.status(200).json("Comment updated !");
     },
     
     deleteOne: async (req, res) => {
@@ -79,12 +79,12 @@ const commentArticleController = {
         const findCommentArticle = await CommentArticle.findByPk(commentArticleId);
 
         if(!findCommentArticle){
-            return res.status(404).json("Ce commentaire est introuvable.");
+            return res.status(404).json("Comment cannot be found.");
         }
 
         await findCommentArticle.destroy();
 
-        res.status(200).json("Commentaire supprimé !");
+        res.status(200).json("Comment deleted !");
     }
 }
 

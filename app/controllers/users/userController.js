@@ -13,7 +13,7 @@ const userController = {
         });
 
         if(result.length === 0){
-            return res.status(404).json("Aucun utilisateur trouvé.");
+            return res.status(404).json("User cannot be found.");
         };
 
         res.status(200).json(result);
@@ -36,7 +36,7 @@ const userController = {
         });
 
         if(result.length === 0){
-            return res.status(404).json("Cet utilisateur est introuvable.");
+            return res.status(404).json("User cannot be found.");
         };
 
         res.status(200).json(result);
@@ -46,7 +46,7 @@ const userController = {
         const {firstname, lastname, nickname, phone, password, passwordConfirm, email, gender} = req.body;
 
         if(!firstname || !lastname || !nickname || !password || !passwordConfirm || !email || !gender){
-            return res.status(400).json("Veuillez remplir les champs obligatoires.");
+            return res.status(400).json("firstname, lastname, nickname, password, passwordConfirm, email, gender are required.");
         }
 
         const findUserNickname = await User.findOne({
@@ -56,13 +56,13 @@ const userController = {
         });
 
         if(findUserNickname){
-            return res.status(409).json("Ce pseudo existe déjà.");
+            return res.status(409).json("Nickname already exists.");
         };
 
         const checkEmail = emailValidator.validate(email);
 
         if(!checkEmail){
-            return res.status(404).json("L'email saisi est incorrect.");
+            return res.status(404).json("Email is incorrect.");
         };
 
         const findUserEmail = await User.findOne({
@@ -72,7 +72,7 @@ const userController = {
         });
 
         if(findUserEmail){
-            return res.status(409).json("Cet email a déjà été utilisé.");
+            return res.status(409).json("Email already exists.");
         }
 
         if(phone){
@@ -83,7 +83,7 @@ const userController = {
             });
 
             if(findUserPhone){
-                return res.status(409).json("Ce numéro est déjà lié à un compte.");
+                return res.status(409).json("Number already linked to an account.");
             }
 
             findUser.phone = phone;
@@ -92,11 +92,11 @@ const userController = {
         const checkPassword = passwordChecker(password);
 
         if(password !== passwordConfirm){
-            return res.status(400).json("Le mot de passe et le mot de passe de confirmation ne sont pas identiques.");
+            return res.status(400).json("Password and passwordConfirm do not match.");
         };
 
         if(!checkPassword){
-            return res.status(400).json("Sécurisez votre mot de passe avec au moins une majuscule, un symbole et un chiffre.");
+            return res.status(400).json("Secure your password with at least a capitalized letter, a symble and a number.");
         };
         const hashedPassword = bcrypt.hashSync(password, 10);
 
@@ -110,7 +110,7 @@ const userController = {
         };
 
         await User.create(newUser);
-        res.status(201).json("Utilisateur créé !");
+        res.status(201).json("User created !");
     },
 
     updateOne: async (req, res) => {
@@ -120,7 +120,7 @@ const userController = {
         const findUser = await User.findByPk(userId);
 
         if(!findUser){
-            return res.status(404).json("Cet utilisateur est introuvable.");
+            return res.status(404).json("User cannot be found.");
         };
 
         if(firstname){
@@ -139,7 +139,7 @@ const userController = {
             });
 
             if(findUserPhone){
-                return res.status(409).json("Ce numéro est déjà lié à un compte.");
+                return res.status(409).json("Number already linked to an account.");
             }
 
             findUser.phone = phone;
@@ -150,11 +150,11 @@ const userController = {
                 where: {
                     nickname
                 }
-            })
+            });
 
             if(findUserNickname){
-                return res.status(409).json("Ce pseudo est déjà utilisé.");
-            }
+                return res.status(409).json("Nickname already exists.");
+            };
 
             findUser.nickname = nickname;
         };
@@ -162,12 +162,12 @@ const userController = {
         if(password){
 
             if(password !== passwordConfirm){
-                return res.status(400).json("Le mot de passe et le mot de passe de confirmation ne sont pas identiques.");
+                return res.status(400).json("Password and passwordConfirm do not match.");
             };
 
             const checkPassword = passwordChecker(password);
             if(!checkPassword){
-                return res.status(400).json("Sécurisez votre nouveau mot de passe avec au moins une majuscule, un symbole et un chiffre.")
+                return res.status(400).json("Secure your password with at least a capitalized letter, a symbol and a number.");
             };
 
             const hashedPasssword = bcrypt.hashSync(password, 10);
@@ -180,7 +180,7 @@ const userController = {
             const checkEmail = emailValidator.validate(email);
             
             if(!checkEmail){
-                return res.status(409).json("Cet email est incorrect");
+                return res.status(409).json("Email is incorrect.");
             };
             
             const findUserEmail = await User.findOne({
@@ -190,7 +190,7 @@ const userController = {
             });
             
             if(findUserEmail){
-                return res.status(409).json("Cet email est déjà utilisé.");
+                return res.status(409).json("Email already exists.");
             };
             
             findUser.email = email;
@@ -202,7 +202,7 @@ const userController = {
 
         await findUser.save();
 
-        res.status(200).json("Les données ont été mises à jour !");
+        res.status(200).json("User updated !");
     },
     
     deleteOne: async (req, res) => {
@@ -211,12 +211,12 @@ const userController = {
         const findUser = await User.findByPk(userId);
 
         if(!findUser){
-            return res.status(404).json("Cet utilisateur est introuvable.");
+            return res.status(404).json("User cannot be found.");
         };
 
         await findUser.destroy();
 
-        res.status(200).json("Utilisateur supprimé !");
+        res.status(200).json("User deleted !");
     },
 
     // /like route maybe ??
@@ -228,7 +228,7 @@ const userController = {
         const findArticle = await Article.findByPk(articleId);
 
         if(!findUser || !findArticle){
-            return res.status(404).json("Cet utilisateur ou cet article n'existe pas.");
+            return res.status(404).json("User cannot be found.");
         }
 
         const findUserLikedArticle = await User.findByPk(userId, {
@@ -246,7 +246,7 @@ const userController = {
 
             await findUser.removeArticle(findArticle);
 
-            return res.status(200).json("Article unliké !");
+            return res.status(200).json("Article unliked !");
 
         } 
 
@@ -254,7 +254,7 @@ const userController = {
 
         await findUser.addArticle(findArticle);
 
-        res.status(200).json("Article liké !");
+        res.status(200).json("Article liked !");
         
     },
 

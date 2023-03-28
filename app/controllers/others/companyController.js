@@ -5,7 +5,7 @@ const companyController = {
     findAll: async (req, res) => {
         const result = await Company.findAll();
         if(result.length === 0){
-            return res.status(404).json("Aucune entreprise n'a été trouvée.");
+            return res.status(404).json("Company cannot be found.");
         };
         res.status(200).json(result);
     },
@@ -16,7 +16,7 @@ const companyController = {
             include: ["product_sold", "product_delivered"]
         });
         if(!findCompany){
-            return res.status(404).json("Cette entreprise est introuvable.");
+            return res.status(404).json("Company cannot be found.");
         };
         res.status(200).json(findCompany);
     },
@@ -25,7 +25,7 @@ const companyController = {
         const {label} = req.body;
 
         if(!label){
-            return res.status(400).json("Le label est obligatoire");
+            return res.status(400).json("Label is required.");
         }
 
         const findCompanyLabel = await Company.findOne({
@@ -35,7 +35,7 @@ const companyController = {
         });
 
         if(findCompanyLabel){
-            return res.status(404).json("Cette entreprise est déjà répertoriée.");
+            return res.status(404).json("Company already exists.");
         };
 
         const newCompany = {
@@ -54,7 +54,7 @@ const companyController = {
         const findCompany = await Company.findByPk(companyId);
         
         if(!findCompany){
-            return res.status(404).json("Cette entreprise est introuvable.");
+            return res.status(404).json("Company cannot be found.");
         };
 
         if(label){
@@ -65,7 +65,7 @@ const companyController = {
             });
 
             if(findCompanyLabel){
-                return res.status(404).json("Cette entreprise est déjà répertoriée.");
+                return res.status(404).json("Company already exists.");
             };
 
             findCompany.label = label;
@@ -73,7 +73,7 @@ const companyController = {
 
         await findCompany.save();
 
-        res.status(200).json("Entreprise mise à jour !");
+        res.status(200).json("Company updated !");
     },
     
     deleteOne: async (req, res) => {
@@ -82,12 +82,12 @@ const companyController = {
         const findCompany = await Company.findByPk(companyId);
         
         if(!findCompany){
-            return res.status(404).json("Cette entreprise est introuvable.");
+            return res.status(404).json("Company cannot be found.");
         };
 
         await findCompany.destroy();
 
-        res.status(200).json("Entreprise supprimée !");
+        res.status(200).json("Company deleted !");
     }
 }
 

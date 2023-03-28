@@ -23,7 +23,7 @@ const activityController = {
         const {code, label, met, category_activity_id} = req.body;
 
         if(!code || !label || !met || !category_activity_id){
-            return res.status(400).json("Le code, le label, le met et la catégorie sont obligatoires.");
+            return res.status(400).json("Code, label, MET and category are required.");
         };
 
         const findActivityCode = await Activity.findOne({
@@ -33,7 +33,7 @@ const activityController = {
         });
 
         if(findActivityCode){
-            return res.status(409).json("Ce code existe déjà.");
+            return res.status(409).json("Code already exists.");
         };
 
         const findActivityLabel = await Activity.findOne({
@@ -43,13 +43,13 @@ const activityController = {
         });
 
         if(findActivityLabel){
-            return res.status(409).json("Ce label existe déjà.");
+            return res.status(409).json("Label already exists.");
         };
 
         const findCategoryActivity = await CategoryActivity.findByPk(category_activity_id);
         
         if(!findCategoryActivity){
-            return res.status(404).json("Cette catégorie est introuvable.");
+            return res.status(404).json("Category cannot be found.");
         };
 
         const newActivity = {
@@ -61,7 +61,7 @@ const activityController = {
 
         await Activity.create(newActivity);
 
-        res.status(201).json("Activité créée !");
+        res.status(201).json("Activity created !");
     },
 
     updateOne: async (req, res) => {
@@ -72,7 +72,7 @@ const activityController = {
         const findActivity = await Activity.findByPk(activityId);
 
         if(!findActivity){
-            return res.status(404).json("Cette activité est introuvable.");
+            return res.status(404).json("Activity cannot be found.");
         };
 
         if(code){
@@ -83,7 +83,7 @@ const activityController = {
             });
 
             if(findActivityCode){
-                return res.status(409).json("Ce code existe déjà.");
+                return res.status(409).json("Code already exists.");
             };
             findActivity.code = code;
         };
@@ -96,7 +96,7 @@ const activityController = {
             });
 
             if(findActivityLabel){
-                return res.status(409).json("Ce label existe déjà.");
+                return res.status(409).json("Label already exists.");
             };
             findActivity.label = label;
         };
@@ -109,14 +109,14 @@ const activityController = {
             const findCategoryActivity = await CategoryActivity.findByPk(category_activity_id);
         
             if(!findCategoryActivity){
-                return res.status(404).json("Cette catégorie est introuvable.");
+                return res.status(404).json("Category cannot be found.");
             };
             findActivity.category_activity_id = category_activity_id;
         };
 
         await findActivity.save();
 
-        res.status(200).json("Activité mise à jour !");
+        res.status(200).json("Activity updated !");
     },
     
     deleteOne: async (req, res) => {
@@ -125,12 +125,12 @@ const activityController = {
         const findActivity = await Activity.findByPk(activityId);
 
         if(!findActivity){
-            return res.status(404).json("Cette activité est introuvable.");
+            return res.status(404).json("Activity cannot be found.");
         };
 
         await findActivity.destroy();
 
-        res.status(200).json("Activité supprimée !");
+        res.status(200).json("Activity deleted !");
     }
 }
 
