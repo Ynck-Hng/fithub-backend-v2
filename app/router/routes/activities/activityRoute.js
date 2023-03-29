@@ -9,7 +9,8 @@ router.get("/:activityId", activityController.findOne);
 router.post("/", activityController.createOne);
 router.patch("/:activityId", activityController.updateOne);
 router.delete("/:activityId", activityController.deleteOne);
-
+router.post("/user/", activityController.assignActivityToUser);
+route.delete("/user/:activityId", activityController.removeActivityFromUser);
 // TODO! user activity 
 
 module.exports = router;

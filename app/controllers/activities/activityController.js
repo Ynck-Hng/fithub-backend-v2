@@ -1,5 +1,6 @@
 const error = require("debug")("error");
 const { Activity, CategoryActivity } = require("./../../models");
+const caloriesCalculator = require("./../../utils/caloriesCalculator");
 
 const activityController = {
     findAll: async (req, res) => {
@@ -131,6 +132,29 @@ const activityController = {
         await findActivity.destroy();
 
         res.status(200).json("Activity deleted !");
+    },
+
+    assignActivityToUser: async (req, res) => {
+
+        // post
+
+        // vérifier qu'ajd il n'a pas eu max XP en comptant calories reçu ?
+
+        // calorie dépensée
+
+        // calculer total calorie si > 1000, on donne pas d'xp.
+
+        // sinon on donne xp
+
+        // ou si 700 et gagne 500 xp, on donne la différence pour aller à 1000
+
+
+    },
+
+    removeActivityFromUser: async (req, res) => {
+        // Permettre ? No imo, mais bonne route à garder pour les admins
+
+        // Check que possède droit admin
     }
 }
 

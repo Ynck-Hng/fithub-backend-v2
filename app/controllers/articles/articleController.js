@@ -141,9 +141,13 @@ const articleController = {
         const findUser = await User.findByPk(userId);
         const findArticle = await Article.findByPk(articleId);
 
-        if(!findUser || !findArticle){
+        if(!findUser){
             return res.status(404).json("User cannot be found.");
-        }
+        };
+
+        if(!findArticle){
+            return res.status(404).json("Article cannot be found.");
+        };
 
         const findUserLikedArticle = await User.findByPk(userId, {
             include: {
