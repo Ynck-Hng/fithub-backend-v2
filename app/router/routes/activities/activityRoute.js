@@ -10,7 +10,7 @@ router.post("/", activityController.createOne);
 router.patch("/:activityId", activityController.updateOne);
 router.delete("/:activityId", activityController.deleteOne);
 router.post("/user/", activityController.assignActivityToUser);
-router.delete("/user/:activityId", activityController.removeActivityFromUser);
+router.delete("/user/:activityUserId", activityController.removeActivityFromUser);
 // TODO! user activity 
 
 module.exports = router;

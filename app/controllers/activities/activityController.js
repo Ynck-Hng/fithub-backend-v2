@@ -179,7 +179,7 @@ const activityController = {
             findUser.xp += caloriesFromActivity;
             await findUser.save();
             break;
-    }
+        }
 
         const newActivity = {
             user_id,
@@ -196,6 +196,94 @@ const activityController = {
 
     removeActivityFromUser: async (req, res) => {
         // Permettre ? No imo, mais bonne route à garder pour les admins
+        /*
+        const userId = req.params.userId;
+        const activityId = req.params.activityId;
+
+        const findUser = await User.findByPk(userId);
+
+        if(!findUser){
+            return res.status(404).json("User cannot be found.");
+        };
+
+        const findActivity = await Activity.findByPk(activityId);
+        
+        if(!findActivity){
+            return res.status(404).json("Activity cannot be found.");;
+        };
+
+        const date = new Date();
+        const formattedDate = date.toISOString().slice(0, 10);
+
+        const findUserActivity = await ActivityUser.findOne({
+            where: {
+                user_id: userId,
+                activityId: activityId,
+                date_assigned: formattedDate
+            }
+        });
+        */
+
+        const userId = req.params.userId;
+        const activityId = req.params.activityId;
+        const activityUserId = req.params.activityUserId;
+
+        const findUser = await User.findByPk(userId);
+
+        if(!findUser){
+            return res.status(404).json("User cannot be found.");
+        };
+
+        const findActivity = await Activity.findByPk(activityId);
+        
+        if(!findActivity){
+            return res.status(404).json("Activity cannot be found.");;
+        };
+
+        const findUserActivity = await ActivityUser.findByPk(activityUserId);
+
+        if(!findUserActivity) {
+            return res.status(404).json("Activity already not assigned to user.");
+        };
+
+        const date = new Date();
+        const formattedDate = date.toISOString().slice(0, 10);
+
+        if(findUserActivity.date_assigned === formattedDate){
+            const findAllUserActivityByDate = await ActivityUser.findAll({
+                where: {
+                    user_id,
+                    activity_id,
+                    date_assigned: formattedDate
+                }
+            });
+
+            //check total calories
+
+            const userTotalCaloriesWithoutSelectedActivity = findAllUserActivityByDate.filter(element => element.id === activityUserId);
+            const caloriesFromActivity = findUserActivity.calories;
+            const userDailyCaloriesTotalBeforeActivity = totalDailyCaloriesCalculator(userTotalCaloriesWithoutSelectedActivity, caloriesFromActivity);
+            
+            switch(userDailyCaloriesTotal){
+            case userDailyCaloriesTotalBeforeActivity > 1000:
+                break;
+            case userDailyCaloriesTotalBeforeActivity + caloriesFromActivity > 1000:
+                findUser.xp += 1000 - caloriesFromActivity;
+                const differenceFromMaxExp = userDailyCaloriesTotalBeforeActivity + caloriesFromActivity - 1000;
+                const expGainedAfterSubstracting = caloriesFromActivity + differenceFromMaxExp;
+                findUser.xp -= expGainedAfterSubstracting;
+                await findUser.save();
+                await findUserActivity.destroy();
+                break;
+            default:
+                findUser.xp -= caloriesFromActivity;
+                await findUser.save();
+                await findUserActivity.destroy();
+                break;
+            }
+        }
+
+        res.status(200).json("Activity removed from user !");
 
         // Check que possède droit admin
     }

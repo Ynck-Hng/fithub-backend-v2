@@ -116,7 +116,7 @@ const userController = {
 
     updateOne: async (req, res) => {
         const userId = req.params.userId;
-        const {firstname, lastname, nickname, phone, password, passwordConfirm, weight, email, gender} = req.body;
+        const {firstname, lastname, nickname, phone, password, passwordConfirm, role, weight, email, gender} = req.body;
 
         const findUser = await User.findByPk(userId);
 
@@ -174,6 +174,10 @@ const userController = {
             const hashedPasssword = bcrypt.hashSync(password, 10);
 
             findUser.password = hashedPasssword;
+        };
+
+        if(role){
+            findUser.role = role;
         };
 
         if(weight){
