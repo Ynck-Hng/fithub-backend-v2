@@ -1,5 +1,5 @@
 const error = require("debug")("error");
-const { User, Article } = require("./../../models");
+const { User, Article, ChallengeUser } = require("./../../models");
 const emailValidator = require("email-validator");
 const bcrypt = require("bcrypt");
 const passwordChecker = require("../../utils/passwordChecker");
@@ -27,8 +27,8 @@ const userController = {
                 exclude: ['password']
             },
             include: [
-                "AcitivitiesUsers",
-                "CommentsArticle",
+                "ActivitiesUsers",
+                "CommentsUser",
                 "ChallengesUser",
                 "ArticlesWritten",
                 "LikedArticles"
@@ -43,10 +43,10 @@ const userController = {
     },
 
     createOne: async (req, res) => {
-        const {firstname, lastname, nickname, phone, password, passwordConfirm, email, gender} = req.body;
+        const {firstname, lastname, nickname, phone, password, passwordConfirm, weight, email, gender} = req.body;
 
-        if(!firstname || !lastname || !nickname || !password || !passwordConfirm || !email || !gender){
-            return res.status(400).json("firstname, lastname, nickname, password, passwordConfirm, email, gender are required.");
+        if(!firstname || !lastname || !nickname || !password || !passwordConfirm || !weight || !email || !gender){
+            return res.status(400).json("firstname, lastname, nickname, password, passwordConfirm, weight, email, gender are required.");
         }
 
         const findUserNickname = await User.findOne({
@@ -105,6 +105,7 @@ const userController = {
             lastname,
             nickname,
             password: hashedPassword,
+            weight,
             email,
             gender
         };
@@ -115,7 +116,7 @@ const userController = {
 
     updateOne: async (req, res) => {
         const userId = req.params.userId;
-        const {firstname, lastname, nickname, phone, password, passwordConfirm, email, gender} = req.body;
+        const {firstname, lastname, nickname, phone, password, passwordConfirm, weight, email, gender} = req.body;
 
         const findUser = await User.findByPk(userId);
 
@@ -173,6 +174,10 @@ const userController = {
             const hashedPasssword = bcrypt.hashSync(password, 10);
 
             findUser.password = hashedPasssword;
+        };
+
+        if(weight){
+            findUser.weight = weight;
         };
 
         if(email){

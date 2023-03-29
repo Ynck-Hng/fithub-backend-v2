@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS "user" (
     login_streak INTEGER DEFAULT 0,
     role user_role DEFAULT 'user',
     email TEXT NOT NULL UNIQUE,
+    weight INTEGER NOT NULL,
     gender user_gender DEFAULT 'non-spécifié',
     xp INT DEFAULT 0,
     profile_visibility user_profile_visibility DEFAULT 'publique',

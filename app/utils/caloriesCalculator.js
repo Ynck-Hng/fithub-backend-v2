@@ -8,7 +8,7 @@ const caloriesCalculator = (MET, duration, weight, res) => {
 
     const totalCalories = (duration * (3.5 * MET * weight)) / 200;
 
-    return totalCalories;
+    return Math.round(totalCalories);
 
 };
 

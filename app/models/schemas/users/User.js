@@ -51,6 +51,13 @@ User.init({
             isEmail: true
         }
     },
+    weight: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        validate: {
+            isInt: true
+        }
+    },
     gender: {
         type: Sequelize.ENUM('femme', 'homme', 'non-spécifié'),
         defaultValue: 'non-spécifié',

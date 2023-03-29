@@ -1,5 +1,7 @@
 const error = require("debug")("error");
-const { Activity, CategoryActivity } = require("./../../models");
+const ActivityUser = require("../../models/schemas/activities/ActivityUser");
+const totalDailyCaloriesCalculator = require("../../utils/totalDailyCaloriesCalculator");
+const { Activity, CategoryActivity, User, ChallengeUser } = require("./../../models");
 const caloriesCalculator = require("./../../utils/caloriesCalculator");
 
 const activityController = {
@@ -135,20 +137,61 @@ const activityController = {
     },
 
     assignActivityToUser: async (req, res) => {
-
         // post
+        const {user_id, activity_id, duration} = req.body;
+        
+        const findUser = await User.findByPk(user_id);
+        if(!findUser) {
+            return res.status(404).json("User cannot be found.");
+        };
 
-        // vérifier qu'ajd il n'a pas eu max XP en comptant calories reçu ?
+        const findActivity = await Activity.findByPk(activity_id);
+        
+        if(!findActivity){
+            return res.status(404).json("Activity cannot be found.");
+        };
 
-        // calorie dépensée
+        const date = new Date();
+        const formattedDate = date.toISOString().slice(0, 10);
 
-        // calculer total calorie si > 1000, on donne pas d'xp.
+        const findAllUserActivityByDate = await ActivityUser.findAll({
+            where: {
+                user_id,
+                activity_id,
+                date_assigned: formattedDate
+            }
+        });
 
-        // sinon on donne xp
+        //check total calories
 
-        // ou si 700 et gagne 500 xp, on donne la différence pour aller à 1000
+        const caloriesFromActivity = caloriesCalculator(findActivity.met, duration, findUser.weight);
 
+        const userDailyCaloriesTotal = totalDailyCaloriesCalculator(findAllUserActivityByDate, caloriesFromActivity);
 
+        switch(userDailyCaloriesTotal){
+        case userDailyCaloriesTotal > 1000:
+            break;
+        case userDailyCaloriesTotal + caloriesFromActivity > 1000:
+            findUser.xp += 1000 - caloriesFromActivity;
+            await findUser.save();
+            break;
+        default:
+            findUser.xp += caloriesFromActivity;
+            await findUser.save();
+            break;
+    }
+
+        const newActivity = {
+            user_id,
+            activity_id,
+            duration,
+            calories: caloriesFromActivity,
+            date_assigned: formattedDate
+        }
+
+        await ActivityUser.create(newActivity);
+
+        res.status(200).json("YEP");
     },
 
     removeActivityFromUser: async (req, res) => {
