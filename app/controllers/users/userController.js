@@ -3,7 +3,6 @@ const { User, Article, ChallengeUser } = require("./../../models");
 const emailValidator = require("email-validator");
 const bcrypt = require("bcrypt");
 const passwordChecker = require("../../utils/passwordChecker");
-const jwt = require("jsonwebtoken");
 
 const userController = {
     findAll: async (req, res) => {
@@ -21,7 +20,7 @@ const userController = {
     },
 
     findOne: async (req, res) => {
-        console.log(req.header["authorization"]);
+        console.log(req.session);
         const userId = req.params.userId;
 
         const result = await User.findByPk(userId, {
@@ -256,14 +255,13 @@ const userController = {
             return res.status(400).json("Email or password is incorrect.");
         };
 
-        const token = jwt.sign({
-            userId: findUser.id,
-            role: findUser.role
-        }, process.env.SECRET_KEY, {expiresIn: "2h"});
+        req.session.user = {
+            id: findUser.id,
+            role: findUser.role,
+        }
+        console.log(res.cookie('name', 'wesh'));
 
-        console.log(token);
-
-        res.status(200).header("Authorization",`Bearer ${token}`).json("User logged in !");
+        res.status(200).json("User logged in !");
     },
     
     logout: async (req, res) => {
