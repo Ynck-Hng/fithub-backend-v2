@@ -1,7 +1,5 @@
 const sanitizeHtml = require("sanitize-html");
 
-// à appeler sur la route
-
 const bodySanitizer = (req,res,next) => {
     if(req.body){
         for(let element in req.body){

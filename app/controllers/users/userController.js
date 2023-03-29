@@ -3,6 +3,7 @@ const { User, Article, ChallengeUser } = require("./../../models");
 const emailValidator = require("email-validator");
 const bcrypt = require("bcrypt");
 const passwordChecker = require("../../utils/passwordChecker");
+const jwt = require("jsonwebtoken");
 
 const userController = {
     findAll: async (req, res) => {
@@ -20,6 +21,7 @@ const userController = {
     },
 
     findOne: async (req, res) => {
+        console.log(req.header["authorization"]);
         const userId = req.params.userId;
 
         const result = await User.findByPk(userId, {
@@ -231,7 +233,37 @@ const userController = {
     // /like route maybe ??
 
     login: async (req, res) => {
-        //TODO! IL FAUT IMPLEMENTER JWT ICI AUSSI
+
+        const {email, password} = req.body;
+
+        if(!email || !password){
+            return res.status(400).json("Email and password are both required.");
+        };
+
+        const findUser = await User.findOne({
+            where:{
+                email
+            }
+        });
+
+        if(!findUser){
+            return res.status(404).json("Email or password is incorrect.");
+        };
+
+        const isPasswordCorrect = bcrypt.compare(password, findUser.password);
+        
+        if(!isPasswordCorrect){
+            return res.status(400).json("Email or password is incorrect.");
+        };
+
+        const token = jwt.sign({
+            userId: findUser.id,
+            role: findUser.role
+        }, process.env.SECRET_KEY, {expiresIn: "2h"});
+
+        console.log(token);
+
+        res.status(200).header("Authorization",`Bearer ${token}`).json("User logged in !");
     },
     
     logout: async (req, res) => {

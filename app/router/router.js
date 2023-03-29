@@ -15,7 +15,6 @@ const productRoute = require("./routes/products/productRoute");
 const commentProductRoute = require("./routes/products/commentProductRoute");
 const categoryProductRoute = require("./routes/products/categoryProductRoute");
 
-
 router.use("/user", userRoute);
 router.use("/article", articleRoute);
 router.use("/category-article", categoryArticleRoute);
