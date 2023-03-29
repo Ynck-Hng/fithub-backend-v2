@@ -162,23 +162,26 @@ const activityController = {
             }
         });
 
-        //check total calories
-
+        //check total calories burned from this activity
         const caloriesFromActivity = caloriesCalculator(findActivity.met, duration, findUser.weight);
 
-        const userDailyCaloriesTotal = totalDailyCaloriesCalculator(findAllUserActivityByDate, caloriesFromActivity);
-
-        switch(userDailyCaloriesTotal){
-        case userDailyCaloriesTotal > 1000:
-            break;
-        case userDailyCaloriesTotal + caloriesFromActivity > 1000:
-            findUser.xp += 1000 - caloriesFromActivity;
+        // check total calories burned today
+        const userDailyCaloriesTotal = totalDailyCaloriesCalculator(findAllUserActivityByDate);
+        
+        if(userDailyCaloriesTotal > 1000){
+            // If user burned more than 1000 today
+            // do nothing
+        }else if( userDailyCaloriesTotal + caloriesFromActivity > 1000){
+            // If the total calories burned today + calories burned from activty is more than 1000
+            // then only add the required amount to reach 1000 cap
+            // to the user exp
+            findUser.xp += (1000 - findUser.xp);
+            //save the changes
             await findUser.save();
-            break;
-        default:
+        } else {
+            // Default case add calories value to the user xp
             findUser.xp += caloriesFromActivity;
             await findUser.save();
-            break;
         }
 
         const newActivity = {
@@ -195,35 +198,6 @@ const activityController = {
     },
 
     removeActivityFromUser: async (req, res) => {
-        // Permettre ? No imo, mais bonne route à garder pour les admins
-        /*
-        const userId = req.params.userId;
-        const activityId = req.params.activityId;
-
-        const findUser = await User.findByPk(userId);
-
-        if(!findUser){
-            return res.status(404).json("User cannot be found.");
-        };
-
-        const findActivity = await Activity.findByPk(activityId);
-        
-        if(!findActivity){
-            return res.status(404).json("Activity cannot be found.");;
-        };
-
-        const date = new Date();
-        const formattedDate = date.toISOString().slice(0, 10);
-
-        const findUserActivity = await ActivityUser.findOne({
-            where: {
-                user_id: userId,
-                activityId: activityId,
-                date_assigned: formattedDate
-            }
-        });
-        */
-
         const userId = req.params.userId;
         const activityId = req.params.activityId;
         const activityUserId = req.params.activityUserId;
@@ -235,7 +209,7 @@ const activityController = {
         };
 
         const findActivity = await Activity.findByPk(activityId);
-        
+        console.log(findActivity);
         if(!findActivity){
             return res.status(404).json("Activity cannot be found.");;
         };
@@ -248,43 +222,49 @@ const activityController = {
 
         const date = new Date();
         const formattedDate = date.toISOString().slice(0, 10);
-
+    
         if(findUserActivity.date_assigned === formattedDate){
             const findAllUserActivityByDate = await ActivityUser.findAll({
                 where: {
-                    user_id,
-                    activity_id,
+                    user_id: userId,
+                    activity_id: activityId,
                     date_assigned: formattedDate
                 }
             });
 
             //check total calories
 
-            const userTotalCaloriesWithoutSelectedActivity = findAllUserActivityByDate.filter(element => element.id === activityUserId);
             const caloriesFromActivity = findUserActivity.calories;
-            const userDailyCaloriesTotalBeforeActivity = totalDailyCaloriesCalculator(userTotalCaloriesWithoutSelectedActivity, caloriesFromActivity);
-            
-            switch(userDailyCaloriesTotal){
-            case userDailyCaloriesTotalBeforeActivity > 1000:
-                break;
-            case userDailyCaloriesTotalBeforeActivity + caloriesFromActivity > 1000:
-                findUser.xp += 1000 - caloriesFromActivity;
-                const differenceFromMaxExp = userDailyCaloriesTotalBeforeActivity + caloriesFromActivity - 1000;
-                const expGainedAfterSubstracting = caloriesFromActivity + differenceFromMaxExp;
-                findUser.xp -= expGainedAfterSubstracting;
-                await findUser.save();
+            // calculate total amount of calories burned on that day
+            const userDailyCaloriesTotal = totalDailyCaloriesCalculator(findAllUserActivityByDate);
+            // calculate total amount of calories burned before registering this activity
+            const userDailyCaloriesTotalBeforeActivity = userDailyCaloriesTotal - caloriesFromActivity;
+
+
+            if(userDailyCaloriesTotalBeforeActivity > 1000){
+                // if calories before activity more than 1000, only delete entry
                 await findUserActivity.destroy();
-                break;
-            default:
+            } else if(userDailyCaloriesTotalBeforeActivity < 1000 && userDailyCaloriesTotalBeforeActivity + caloriesFromActivity > 1000) {
+                // if calories less than 1000, but the sum before activity + calories burned is more than 1000
+                // only substract by taking in account the extra that was not added
+                // it will return a negative number
+                const differenceFromMaxExp = userDailyCaloriesTotalBeforeActivity - 1000;
+                findUser.xp += differenceFromMaxExp;
+                // save modification
+                await findUser.save();
+                // delete entry
+                await findUserActivity.destroy();
+            } else {
+                // default case, substract the full calories value
                 findUser.xp -= caloriesFromActivity;
                 await findUser.save();
                 await findUserActivity.destroy();
-                break;
             }
+                
         }
 
         res.status(200).json("Activity removed from user !");
-
+        
         // Check que possède droit admin
     }
 }

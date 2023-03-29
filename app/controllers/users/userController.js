@@ -35,7 +35,7 @@ const userController = {
             ]
         });
 
-        if(result.length === 0){
+        if(!result){
             return res.status(404).json("User cannot be found.");
         };
 

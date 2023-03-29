@@ -1,4 +1,4 @@
-const totalDailyCaloriesCalculator = (userDailyActivitiesData, caloriesFromActivity) => {
+const totalDailyCaloriesCalculator = (userDailyActivitiesData) => {
     let totalCalories = 0;
 
     for(let element of userDailyActivitiesData){

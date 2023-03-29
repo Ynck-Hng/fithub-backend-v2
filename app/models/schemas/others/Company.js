@@ -4,6 +4,12 @@ const sequelize = require("./../../../data/sequelize");
 class Company extends Sequelize.Model{}
 
 Company.init({
+    id: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        allowNull: false,
+        autoIncrement: true
+    },
     label: {
         type: Sequelize.TEXT,
         allowNull: false,

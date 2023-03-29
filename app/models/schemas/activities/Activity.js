@@ -4,6 +4,12 @@ const sequelize = require("./../../../data/sequelize");
 class Activity extends Sequelize.Model{}
 
 Activity.init({
+    id: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        allowNull: false,
+        autoIncrement: true
+    },
     code: {
         type: Sequelize.INTEGER,
         allowNull: false,

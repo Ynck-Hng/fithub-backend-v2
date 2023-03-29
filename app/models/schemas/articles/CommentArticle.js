@@ -4,6 +4,12 @@ const sequelize = require("./../../../data/sequelize");
 class CommentArticle extends Sequelize.Model{}
 
 CommentArticle.init({
+    id: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        allowNull: false,
+        autoIncrement: true
+    },
     content: {
         type: Sequelize.TEXT,
         allowNull: false,

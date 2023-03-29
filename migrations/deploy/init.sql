@@ -128,9 +128,10 @@ CREATE TABLE IF NOT EXISTS activity (
 );
 
 CREATE TABLE IF NOT EXISTS activity_user (
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     user_id INT REFERENCES "user"(id) ON DELETE CASCADE NOT NULL,
     activity_id INT REFERENCES activity(id) ON DELETE CASCADE NOT NULL,
-    calories INT NOT NULL,
+    calories INT NOT NULL CHECK (calories > 1),
     duration INT NOT NULL CHECK (duration > 1),
     date_assigned TEXT DEFAULT TO_CHAR(NOW(), 'YYYY-MM-DD'),
     created_at TIMESTAMPTZ DEFAULT NOW(),
