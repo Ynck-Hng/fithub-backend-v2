@@ -1,7 +1,7 @@
 const error = require("debug")("error");
 const ActivityUser = require("../../models/schemas/activities/ActivityUser");
 const totalDailyCaloriesCalculator = require("../../utils/totalDailyCaloriesCalculator");
-const { Activity, CategoryActivity, User, ChallengeUser } = require("./../../models");
+const { Activity, CategoryActivity, User } = require("./../../models");
 const caloriesCalculator = require("./../../utils/caloriesCalculator");
 
 const activityController = {
@@ -194,7 +194,7 @@ const activityController = {
 
         await ActivityUser.create(newActivity);
 
-        res.status(200).json("YEP");
+        res.status(200).json("Activity assigned to user !");
     },
 
     removeActivityFromUser: async (req, res) => {
@@ -260,12 +260,8 @@ const activityController = {
                 await findUser.save();
                 await findUserActivity.destroy();
             }
-                
         }
-
         res.status(200).json("Activity removed from user !");
-        
-        // Check que possède droit admin
     }
 }
 

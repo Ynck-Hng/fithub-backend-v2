@@ -15,9 +15,7 @@ const articleController = {
     },
 
     findOne: async (req, res) => {
-
         const articleId = req.params.articleId;
-        console.log(req.params.articleId);
         const result = await Article.findByPk(articleId, {
             include: ["UserAuthor", "CommentsArticle", "CategoriesArticle"]
         });

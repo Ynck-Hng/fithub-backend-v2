@@ -44,13 +44,13 @@ const commentArticleController = {
             return res.status(400).json("Content cannot be empty.");
         };
 
-        const newCommentData = {
+        const newComment = {
             content,
             article_id,
             user_id
         }
 
-        const newCreatedComment = await CommentArticle.create(newCommentData);
+        CommentArticle.create(newComment);
 
         res.status(200).json("Comment created !");
     },
