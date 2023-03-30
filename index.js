@@ -9,7 +9,6 @@ const {notFound, errorCollector} = require("./app/utils/errorHandler");
 const PORT = process.env.PORT;
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
-const userSession = require("./app/utils/userSession");
 
 app.use(express.json());
 app.use(cors({
@@ -35,7 +34,6 @@ app.use(
 );
 
 app.use(cookieParser());
-app.use(userSession);
 
 app.use(router);
 
@@ -45,4 +43,4 @@ app.use(errorCollector);
 
 app.listen(PORT, () => {
     console.log(`API Server started on ${PORT}`);
-})
+});

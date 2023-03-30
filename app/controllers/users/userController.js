@@ -1,5 +1,5 @@
 const error = require("debug")("error");
-const { User, Article, ChallengeUser } = require("./../../models");
+const { User } = require("./../../models");
 const emailValidator = require("email-validator");
 const bcrypt = require("bcrypt");
 const passwordChecker = require("../../utils/passwordChecker");
