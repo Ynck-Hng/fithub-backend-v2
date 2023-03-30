@@ -2,7 +2,7 @@ const error = require("debug")("error");
 const { User } = require("./../../models");
 const emailValidator = require("email-validator");
 const bcrypt = require("bcrypt");
-const passwordChecker = require("../../utils/passwordChecker");
+const passwordChecker = require("../../utils/userValidations/passwordChecker");
 
 const userController = {
     findAll: async (req, res) => {
@@ -116,7 +116,9 @@ const userController = {
 
     updateOne: async (req, res) => {
         const userId = req.params.userId;
-    
+
+        isSameIdOrAdmin(req, res, userId);
+
         const {firstname, lastname, nickname, phone, password, passwordConfirm, role, weight, email, gender} = req.body;
 
         const findUser = await User.findByPk(userId);
@@ -231,8 +233,7 @@ const userController = {
 
     login: async (req, res) => {
    
-        const findSession = req.sessionStore.sessions[`${req.cookies.sid}`];
-
+        const findSession = req.session.user;
         if(findSession){
             return res.status(403).json("Access denied, user is already logged in.");
         }
@@ -244,6 +245,7 @@ const userController = {
         };
 
         const findUser = await User.findOne({
+            exclude: ["password"],
             where:{
                 email
             }
@@ -259,37 +261,25 @@ const userController = {
             return res.status(400).json("Email or password is incorrect.");
         };
 
-
         req.session.user = {
             id: findUser.id,
             role: findUser.role
         }
 
-        res.cookie("sid", req.sessionID);
-
-        res.status(200).json("User logged in !");
+        // to discuss what info we want to transmit to the client
+        res.status(200).json(findUser);
     },
     
     logout: async (req, res) => {
-
-        const findSession = req.sessionStore.sessions[`${req.cookies.sid}`];
-
-        if(!findSession){
-            res.status(403).json("Access denied, user is not logged in.");
-        };
-
-        const sessionCookies = JSON.parse(findSession);
+  
+        const findSession = req.session.user;
    
-        if(!sessionCookies){
-            return res.status(400).json("pb");
-        };
-
-        const findUser = await User.findByPk(sessionCookies.user.id);
+        const findUser = await User.findByPk(findSession.id);
         if(!findUser){
             return res.status(404).json("User cannot be found.");
         };
 
-        await req.session.destroy();
+        delete req.session.user;
 
         res.status(200).json("YEP");
         

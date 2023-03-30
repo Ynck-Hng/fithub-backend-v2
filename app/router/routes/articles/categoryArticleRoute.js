@@ -1,4 +1,6 @@
 const express = require("express");
+const isAdmin = require("../../../utils/userValidations/isAdmin");
+const isAuthenticated = require("../../../utils/userValidations/isAuthenticated");
 const categoryArticleController = require("./../../../controllers/articles/categoryArticleController");
 const router = express.Router();
 const bodySanitizer = require("./../../../utils/bodySanitizer");
@@ -8,9 +10,9 @@ const { errorCatcher } = require("./../../../utils/errorHandler");
 
 router.get("/", errorCatcher(categoryArticleController.findAll));
 router.get("/:categoryArticleId", errorCatcher(categoryArticleController.findOne));
-router.post("/", bodySanitizer, errorCatcher(categoryArticleController.createOne));
-router.patch("/:categoryArticleId", bodySanitizer, errorCatcher(categoryArticleController.updateOne));
-router.delete("/:categoryArticleId", errorCatcher(categoryArticleController.deleteOne));
-router.post("/article/:articleId/category-article", bodySanitizer, errorCatcher(categoryArticleController.assignCategoryToArticle));
-router.delete("/article/:articleId/category-article/:categoryArticleId", errorCatcher(categoryArticleController.removeCategoryFromArticle));
+router.post("/", isAuthenticated, bodySanitizer, errorCatcher(categoryArticleController.createOne));
+router.patch("/:categoryArticleId", isAuthenticated, bodySanitizer, errorCatcher(categoryArticleController.updateOne));
+router.delete("/:categoryArticleId", isAdmin, errorCatcher(categoryArticleController.deleteOne));
+router.post("/article/:articleId/category-article", isAuthenticated, bodySanitizer, errorCatcher(categoryArticleController.assignCategoryToArticle));
+router.delete("/article/:articleId/category-article/:categoryArticleId", isAuthenticated, errorCatcher(categoryArticleController.removeCategoryFromArticle));
 module.exports = router;

@@ -15,9 +15,7 @@ app.use(cors({
     origin: "http://localhost:5173",
     credentials: true
 }));
-
-app.set("trust proxy", 1);
-
+//app.set("trust proxy", 1);
 app.use(bodyParser.json());
 app.use(express.urlencoded({extended: true}));
 app.use(
@@ -27,7 +25,7 @@ app.use(
         saveUninitialized: true,
         cookie: {
             secure: false,
-            sameSite: "none",
+            sameSite: "lax",
             maxAge : 3600*60*60
         }
     })

@@ -74,7 +74,6 @@ const articleController = {
     updateOne: async (req, res) => {
         const articleId = req.params.articleId;
         const {title, description, content, upvote} = req.body;
-
         const findArticle = await Article.findByPk(articleId);
 
         if(!findArticle){
@@ -107,6 +106,8 @@ const articleController = {
             findArticle.content = content;
         };
 
+        // TODO! Careful upvote value
+
         if(upvote){
             findArticle.upvote = upvote;
         };
@@ -118,6 +119,8 @@ const articleController = {
     },
     
     deleteOne: async (req, res) => {
+
+        // Can a user without delete button make a delete request ?
         const articleId = req.params.articleId;
 
         const findArticle = await Article.findByPk(articleId);
@@ -137,11 +140,12 @@ const articleController = {
         const {userId, articleId} = req.body;
 
         const findUser = await User.findByPk(userId);
-        const findArticle = await Article.findByPk(articleId);
 
         if(!findUser){
             return res.status(404).json("User cannot be found.");
         };
+
+        const findArticle = await Article.findByPk(articleId);
 
         if(!findArticle){
             return res.status(404).json("Article cannot be found.");

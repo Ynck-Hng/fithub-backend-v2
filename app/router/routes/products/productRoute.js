@@ -6,6 +6,8 @@ const { errorCatcher } = require("./../../../utils/errorHandler");
 
 // Currently on route http://localhost:PORT/product/
 
+// TODO! IMPLEMENT AUTH IF HAVE TIME
+
 router.get("/", errorCatcher(productController.findAll));
 router.get("/:productId", errorCatcher(productController.findOne));
 router.post("/", bodySanitizer, errorCatcher(productController.createOne));

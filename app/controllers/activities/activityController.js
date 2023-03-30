@@ -1,8 +1,9 @@
 const error = require("debug")("error");
 const ActivityUser = require("../../models/schemas/activities/ActivityUser");
-const totalDailyCaloriesCalculator = require("../../utils/totalDailyCaloriesCalculator");
+const totalDailyCaloriesCalculator = require("../../utils/calories/totalDailyCaloriesCalculator");
+const isSameIdOrAdmin = require("../../utils/isSameIdOrAdmin");
 const { Activity, CategoryActivity, User } = require("./../../models");
-const caloriesCalculator = require("./../../utils/caloriesCalculator");
+const caloriesCalculator = require("./../../utils/calories/caloriesCalculator");
 
 const activityController = {
     findAll: async (req, res) => {
@@ -140,6 +141,8 @@ const activityController = {
         // post
         const {user_id, activity_id, duration} = req.body;
         
+        isSameIdOrAdmin(req, res, user_id);
+
         const findUser = await User.findByPk(user_id);
         if(!findUser) {
             return res.status(404).json("User cannot be found.");
@@ -199,6 +202,9 @@ const activityController = {
 
     removeActivityFromUser: async (req, res) => {
         const userId = req.params.userId;
+
+        isSameIdOrAdmin(req, res, userId);
+
         const activityId = req.params.activityId;
         const activityUserId = req.params.activityUserId;
 
