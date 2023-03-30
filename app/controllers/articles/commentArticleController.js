@@ -1,5 +1,4 @@
 const error = require("debug")("error");
-const isSameIdOrAdmin = require("../../utils/isSameIdOrAdmin");
 const { CommentArticle, Article, User } = require("./../../models");
 
 // to discuss
@@ -24,8 +23,6 @@ const commentArticleController = {
 
     createOne: async (req, res) => {
         const {content, article_id, user_id} = req.body;
-
-        isSameIdOrAdmin(user_id);
 
         if(!content || !article_id || !user_id){
             return res.status(400).json("Content, article_id and user_id are required.");
