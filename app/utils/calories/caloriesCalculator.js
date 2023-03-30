@@ -1,5 +1,6 @@
 const caloriesCalculator = (MET, duration, weight, res) => {
-
+    // calculates calories burned from one activity
+    
     if(!MET || !duration || !weight){
         return res.status(400).json("MET, duration and weight are required.");
     };
