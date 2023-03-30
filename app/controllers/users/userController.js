@@ -20,9 +20,8 @@ const userController = {
     },
 
     findOne: async (req, res) => {
-        console.log(req.session);
+        
         const userId = req.params.userId;
-
         const result = await User.findByPk(userId, {
             attributes: {
                 exclude: ['password']
@@ -117,6 +116,7 @@ const userController = {
 
     updateOne: async (req, res) => {
         const userId = req.params.userId;
+    
         const {firstname, lastname, nickname, phone, password, passwordConfirm, role, weight, email, gender} = req.body;
 
         const findUser = await User.findByPk(userId);
@@ -229,9 +229,13 @@ const userController = {
         res.status(200).json("User deleted !");
     },
 
-    // /like route maybe ??
-
     login: async (req, res) => {
+   
+        const findSession = req.sessionStore.sessions[`${req.cookies.sid}`];
+
+        if(findSession){
+            return res.status(403).json("Access denied, user is already logged in.");
+        }
 
         const {email, password} = req.body;
 
@@ -255,17 +259,40 @@ const userController = {
             return res.status(400).json("Email or password is incorrect.");
         };
 
+
         req.session.user = {
             id: findUser.id,
-            role: findUser.role,
+            role: findUser.role
         }
-        console.log(res.cookie('name', 'wesh'));
+
+        res.cookie("sid", req.sessionID);
 
         res.status(200).json("User logged in !");
     },
     
     logout: async (req, res) => {
 
+        const findSession = req.sessionStore.sessions[`${req.cookies.sid}`];
+
+        if(!findSession){
+            res.status(403).json("Access denied, user is not logged in.");
+        };
+
+        const sessionCookies = JSON.parse(findSession);
+   
+        if(!sessionCookies){
+            return res.status(400).json("pb");
+        };
+
+        const findUser = await User.findByPk(sessionCookies.user.id);
+        if(!findUser){
+            return res.status(404).json("User cannot be found.");
+        };
+
+        await req.session.destroy();
+
+        res.status(200).json("YEP");
+        
     }
 }
 

@@ -9,25 +9,27 @@ const {notFound, errorCollector} = require("./app/utils/errorHandler");
 const PORT = process.env.PORT;
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
-const userSession = require("./app/utils/userSesssion");
+const userSession = require("./app/utils/userSession");
 
+app.use(express.json());
 app.use(cors({
+    origin: "http://localhost:5173",
+    credentials: true
+}));
 
-    origin: "http://localhost:3000",
-    credentials: true   
-}
-));
+app.set("trust proxy", 1);
+
 app.use(bodyParser.json());
 app.use(express.urlencoded({extended: true}));
 app.use(
     session({
         secret: process.env.SECRET_KEY,
         resave: false,
-        saveUninitialized: false,
+        saveUninitialized: true,
         cookie: {
             secure: false,
-            sameSite: "lax",
-            maxAge : 3600 * 60 * 60
+            sameSite: "none",
+            maxAge : 3600*60*60
         }
     })
 );

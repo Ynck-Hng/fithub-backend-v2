@@ -11,7 +11,7 @@ router.post("/", bodySanitizer, errorCatcher(userController.createOne));
 router.patch("/:userId", bodySanitizer, errorCatcher(userController.updateOne));
 router.delete("/:userId", bodySanitizer, errorCatcher(userController.deleteOne));
 router.post("/login", errorCatcher(userController.login));
-router.get("/logout", errorCatcher(userController.logout));
+router.get("/session/logout", errorCatcher(userController.logout));
 //login logout to be tested with JWT
 
 module.exports = router;
