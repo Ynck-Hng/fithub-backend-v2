@@ -68,6 +68,10 @@ User.init({
         type: Sequelize.ENUM('femme', 'homme', 'non-spécifié'),
         defaultValue: 'non-spécifié',
     },
+    challenge_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+    },
     xp: {
         type: Sequelize.INTEGER,
         defaultValue: 0

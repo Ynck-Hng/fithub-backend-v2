@@ -117,6 +117,16 @@ Challenge.belongsToMany(User, {
     otherKey: "user_id"
 });
 
+User.belongsTo(Challenge, {
+    as: "DailyChallenge",
+    foreignKey: "challenge_id",
+});
+
+Challenge.hasMany(User, {
+    as: "ChallengesDaily",
+    foreignKey: "challenge_id"
+});
+
 // activity_user
 
 User.belongsToMany(Activity, {
@@ -149,7 +159,6 @@ CategoryActivity.hasMany(Activity, {
     foreignKey: "category_activity_id"
 });
 
-// TODO missing achievement
 /*
 // comment_product_user
 

@@ -92,7 +92,7 @@ const challengeController = {
         //format la date
         const currentDate = new Date();
         const formattedDate = currentDate.toISOString().slice(0,10);
-        console.log(formattedDate);
+
         //multiple checks, si on tente de check user + présence challenge
         //ambigû psk on sait pas si user existe du coup
         const findUser = await User.findByPk(userId)

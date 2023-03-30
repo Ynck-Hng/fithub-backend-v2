@@ -6,12 +6,13 @@ const passwordChecker = require("../../utils/userValidations/passwordChecker");
 
 const userController = {
     findAll: async (req, res) => {
+        // find all except password
         const result = await User.findAll({
             attributes: {
                 exclude: ['password']
             },
         });
-
+        // Must test result.length because findAll always returns [] if no users found
         if(result.length === 0){
             return res.status(404).json("User cannot be found.");
         };
@@ -22,6 +23,8 @@ const userController = {
     findOne: async (req, res) => {
         
         const userId = req.params.userId;
+
+        // Retrieve all infos except password
         const result = await User.findByPk(userId, {
             attributes: {
                 exclude: ['password']
@@ -34,7 +37,7 @@ const userController = {
                 "LikedArticles"
             ]
         });
-
+        // if user not found, return 404
         if(!result){
             return res.status(404).json("User cannot be found.");
         };
@@ -45,20 +48,22 @@ const userController = {
     createOne: async (req, res) => {
         const {firstname, lastname, nickname, phone, password, passwordConfirm, weight, email, gender} = req.body;
 
+        // checks that every fields have been properly received
         if(!firstname || !lastname || !nickname || !password || !passwordConfirm || !weight || !email || !gender){
             return res.status(400).json("firstname, lastname, nickname, password, passwordConfirm, weight, email, gender are required.");
         }
-
+        // checks if nickname is already taken
         const findUserNickname = await User.findOne({
             where: {
                 nickname
             }
         });
-
+        // if taken, return 409 conflict
         if(findUserNickname){
             return res.status(409).json("Nickname already exists.");
         };
 
+        // check email with email validator
         const checkEmail = emailValidator.validate(email);
 
         if(!checkEmail){
@@ -89,15 +94,20 @@ const userController = {
             findUser.phone = phone;
         };
 
-        const checkPassword = passwordChecker(password);
-
+        
         if(password !== passwordConfirm){
             return res.status(400).json("Password and passwordConfirm do not match.");
         };
 
+        // check function to make sure the password contains
+        // 1capitalized letter, 1 symbol, 1 number and is between 1 - 50 characters.
+        const checkPassword = passwordChecker(password);
+
         if(!checkPassword){
             return res.status(400).json("Secure your password with at least a capitalized letter, a symble and a number.");
         };
+
+        // hash the password
         const hashedPassword = bcrypt.hashSync(password, 10);
 
         const newUser = {
@@ -109,7 +119,7 @@ const userController = {
             email,
             gender
         };
-
+        // store in the database
         await User.create(newUser);
         res.status(201).json("User created !");
     },
@@ -127,6 +137,7 @@ const userController = {
             return res.status(404).json("User cannot be found.");
         };
 
+        // update value only if value is retrieved
         if(firstname){
             findUser.firstname = firstname;
         };
@@ -162,6 +173,8 @@ const userController = {
 
             findUser.nickname = nickname;
         };
+
+        // if changing password, need to apply the same password verification process
 
         if(password){
 
@@ -212,6 +225,7 @@ const userController = {
             findUser.gender = gender;
         };
 
+        // update the user data
         await findUser.save();
 
         res.status(200).json("User updated !");
@@ -221,7 +235,7 @@ const userController = {
         const userId = req.params.userId;
 
         const findUser = await User.findByPk(userId);
-
+        // make sure that user exists before deleting
         if(!findUser){
             return res.status(404).json("User cannot be found.");
         };
@@ -232,24 +246,26 @@ const userController = {
     },
 
     login: async (req, res) => {
-   
+        // If user already logged in, then return 403 forbidden
         const findSession = req.session.user;
         if(findSession){
             return res.status(403).json("Access denied, user is already logged in.");
         }
 
         const {email, password} = req.body;
-
+        // make sure that both email & password have been sent
         if(!email || !password){
             return res.status(400).json("Email and password are both required.");
         };
-
+        // make sure that user exists
         const findUser = await User.findOne({
             exclude: ["password"],
             where:{
                 email
             }
         });
+        
+        // if user does not exist, return 404
 
         if(!findUser){
             return res.status(404).json("Email or password is incorrect.");
@@ -260,7 +276,7 @@ const userController = {
         if(!isPasswordCorrect){
             return res.status(400).json("Email or password is incorrect.");
         };
-
+        // creates a user session
         req.session.user = {
             id: findUser.id,
             role: findUser.role
@@ -271,9 +287,10 @@ const userController = {
     },
     
     logout: async (req, res) => {
-  
+        
         const findSession = req.session.user;
-   
+        
+        // make sure that user exists before logging out
         const findUser = await User.findByPk(findSession.id);
         if(!findUser){
             return res.status(404).json("User cannot be found.");
@@ -281,7 +298,7 @@ const userController = {
 
         delete req.session.user;
 
-        res.status(200).json("YEP");
+        res.status(200).json("Logged out !");
         
     }
 }

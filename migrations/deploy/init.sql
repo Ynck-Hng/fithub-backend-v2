@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS "user" (
     email TEXT NOT NULL UNIQUE,
     weight INTEGER NOT NULL,
     gender user_gender DEFAULT 'non-spécifié',
+    challenge_id INT REFERENCES challenge(id) NOT NULL,
     xp INT DEFAULT 0,
     profile_visibility user_profile_visibility DEFAULT 'publique',
     created_at TIMESTAMPTZ DEFAULT NOW(),

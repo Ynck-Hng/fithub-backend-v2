@@ -11,11 +11,12 @@ const session = require("express-session");
 const cookieParser = require("cookie-parser");
 
 app.use(express.json());
+
 app.use(cors({
     origin: "http://localhost:5173",
     credentials: true
 }));
-//app.set("trust proxy", 1);
+
 app.use(bodyParser.json());
 app.use(express.urlencoded({extended: true}));
 app.use(

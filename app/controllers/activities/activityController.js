@@ -8,18 +8,18 @@ const caloriesCalculator = require("./../../utils/calories/caloriesCalculator");
 const activityController = {
     findAll: async (req, res) => {
         const result = await Activity.findAll({
-            include: ["UsersActivities", "CategoriesActivity"]
+            include: ["CategoriesActivity"]
         });
 
         if(result.length === 0){
-            return res.status(404).json("Aucune activité n'a été trouvée.");
+            return res.status(404).json("Activity cannot be found.");
         };
 
         res.status(200).json(result);
     },
 
     findOne: async (req, res) => {
-        // besoin ???
+        // do we need it ? have to discuss
 
     },
 
@@ -30,6 +30,7 @@ const activityController = {
             return res.status(400).json("Code, label, MET and category are required.");
         };
 
+        // verify that the code is not used already
         const findActivityCode = await Activity.findOne({
             where: {
                 code
@@ -40,6 +41,7 @@ const activityController = {
             return res.status(409).json("Code already exists.");
         };
 
+        // verify that the label does not exist
         const findActivityLabel = await Activity.findOne({
             where: {
                 label
@@ -215,7 +217,7 @@ const activityController = {
         };
 
         const findActivity = await Activity.findByPk(activityId);
-        console.log(findActivity);
+
         if(!findActivity){
             return res.status(404).json("Activity cannot be found.");;
         };
