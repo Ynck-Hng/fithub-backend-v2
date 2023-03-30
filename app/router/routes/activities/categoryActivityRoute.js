@@ -10,6 +10,4 @@ router.post("/", bodySanitizer, categoryActivityController.createOne);
 router.patch("/:categoryActivityId", bodySanitizer, categoryActivityController.updateOne);
 router.delete("/:categoryActivityId", categoryActivityController.deleteOne);
 
-
-
 module.exports = router;

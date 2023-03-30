@@ -2,12 +2,14 @@ const express = require("express");
 const productController = require("./../../../controllers/products/productController");
 const router = express.Router();
 const bodySanitizer = require("./../../../utils/bodySanitizer");
+const { errorCatcher } = require("./../../../utils/errorHandler");
+
 // Currently on route http://localhost:PORT/product/
 
-router.get("/", productController.findAll);
-router.get("/:productId", productController.findOne);
-router.post("/", bodySanitizer, productController.createOne);
-router.patch("/:productId", bodySanitizer, productController.updateOne);
-router.delete("/:productId", productController.deleteOne);
+router.get("/", errorCatcher(productController.findAll));
+router.get("/:productId", errorCatcher(productController.findOne));
+router.post("/", bodySanitizer, errorCatcher(productController.createOne));
+router.patch("/:productId", bodySanitizer, errorCatcher(productController.updateOne));
+router.delete("/:productId", errorCatcher(productController.deleteOne));
 
 module.exports = router;
