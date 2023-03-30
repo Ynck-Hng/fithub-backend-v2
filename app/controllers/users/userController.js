@@ -12,6 +12,7 @@ const userController = {
                 exclude: ['password']
             },
         });
+        console.log(result);
         // Must test result.length because findAll always returns [] if no users found
         if(result.length === 0){
             return res.status(404).json("User cannot be found.");

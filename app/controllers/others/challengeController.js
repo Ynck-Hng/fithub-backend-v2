@@ -1,4 +1,5 @@
 const error = require("debug")("error");
+const randomNumber = require("../../utils/randomNumber");
 const { Challenge, User, ChallengeUser } = require("./../../models");
 
 const challengeController = {
@@ -80,28 +81,20 @@ const challengeController = {
         res.status(200).json("Challenge updated !");
     },
 
-        //user activity where ? 
-
     assignChallenge: async (req, res) => {
-        // TODO!
-
-        //check d'abord qu'il n'a pas encore reçu de challenge ajd
 
         const {userId} = req.body;
         
-        //format la date
+        // formate date to retrieve a YYYY-MM-DD date
         const currentDate = new Date();
         const formattedDate = currentDate.toISOString().slice(0,10);
 
-        //multiple checks, si on tente de check user + présence challenge
-        //ambigû psk on sait pas si user existe du coup
         const findUser = await User.findByPk(userId)
         if(!findUser){
             return res.status(404).json("User cannot be found.");
         };
 
-        // random number here
-
+        // check if user received a daily challenge today already
         const findChallengeUserByDate = await ChallengeUser.findOne({
             where: {
                 date_assigned: formattedDate
@@ -114,19 +107,21 @@ const challengeController = {
 
         const allChallenges = await Challenge.findAll();
 
+        const randomChallengeNumber = randomNumber(allChallenges.length);
+
         const newUserChallenge = {
             user_id: userId,
-            challenge_id: allChallenges[0].id,
+            challenge_id: allChallenges[randomChallengeNumber].id,
             date_assigned: formattedDate
         }
-
+        // Assign challenge to user
+        // and update challenge_id Foreign Key in user
+        findUser.challenge_id = allChallenges[randomChallengeNumber].id;
+        await findUser.save();
         await ChallengeUser.create(newUserChallenge);
 
-        res.status(200).json("Challenge created !");
-        
-        //through date_assigned
-
-        //check si total calories > 1000
+        res.status(200).json("Challenge assigned to user !");
+    
     },
 
     challengeChecker: async (req, res) => {
@@ -156,12 +151,18 @@ const challengeController = {
             return res.status(404).json("Only current day's challenge can be completed.");
         };
 
+        // if challenge not yet completed
+        // set to yes
+
         switch(findChallengeUserByDate.completed){
             case 'no':
                 findChallengeUserByDate.completed = 'yes';
                 findChallengeUserByDate.save();
                 break;
             case 'yes':
+
+            // If challenge completed already
+            // set to no
                 findChallengeUserByDate.completed = 'no';
                 findChallengeUserByDate.save();
                 break;

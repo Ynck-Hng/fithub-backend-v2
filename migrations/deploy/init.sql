@@ -8,6 +8,15 @@ CREATE TYPE user_gender AS ENUM ('femme', 'homme', 'non-spécifié');
 CREATE TYPE user_profile_visibility AS ENUM ('publique', 'privé');
 CREATE TYPE user_role AS ENUM ('user', 'admin');
 
+-- challenge --
+
+CREATE TABLE IF NOT EXISTS challenge (
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    label TEXT NOT NULL UNIQUE,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NULL
+);
+
 CREATE TABLE IF NOT EXISTS "user" (
     id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     firstname TEXT NOT NULL,
@@ -20,21 +29,13 @@ CREATE TABLE IF NOT EXISTS "user" (
     email TEXT NOT NULL UNIQUE,
     weight INTEGER NOT NULL,
     gender user_gender DEFAULT 'non-spécifié',
-    challenge_id INT REFERENCES challenge(id) NOT NULL,
+    challenge_id INT REFERENCES challenge(id) DEFAULT NULL,
     xp INT DEFAULT 0,
     profile_visibility user_profile_visibility DEFAULT 'publique',
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NULL
 );
 
--- challenge --
-
-CREATE TABLE IF NOT EXISTS challenge (
-    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    label TEXT NOT NULL UNIQUE,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NULL
-);
 
 CREATE TYPE completed_challenge AS ENUM ('yes', 'no');
 

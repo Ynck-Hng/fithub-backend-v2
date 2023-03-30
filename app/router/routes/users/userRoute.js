@@ -5,6 +5,7 @@ const { errorCatcher } = require("./../../../utils/errorHandler");
 const bodySanitizer = require("./../../../utils/bodySanitizer");
 const isAuthenticated = require("./../../../utils/userValidations/isAuthenticated");
 const isAdmin = require("../../../utils/userValidations/isAdmin");
+const multer = require("multer");
 // Currently on route http://localhost:PORT/user/
 
 router.get("/", errorCatcher(userController.findAll));

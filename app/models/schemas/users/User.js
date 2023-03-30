@@ -70,7 +70,8 @@ User.init({
     },
     challenge_id: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: true,
+        defaultValue: null
     },
     xp: {
         type: Sequelize.INTEGER,

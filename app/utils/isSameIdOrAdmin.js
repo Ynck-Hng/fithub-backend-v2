@@ -1,5 +1,5 @@
 const isSameIdOrAdmin = (req, res, id) => {
-    if(req.session.user.id !== id || req.session.user.role !== "admin"){
+    if(!req.session.user || req.session.user.id !== id || req.session.user.role !== "admin"){
         return res.status(401).json("Authorized actions.");
     };
 }
