@@ -2,12 +2,14 @@ const express = require("express");
 const categoryActivityController = require("./../../../controllers/activities/categoryActivityController");
 const router = express.Router();
 const bodySanitizer = require("./../../../utils/bodySanitizer");
+const { errorCatcher } = require("./../../../utils/errorHandler");
+
 // Currently on route http://localhost:PORT/category-activity/
 
-router.get("/", categoryActivityController.findAll);
-router.get("/:categoryActivityId", categoryActivityController.findOne);
-router.post("/", bodySanitizer, categoryActivityController.createOne);
-router.patch("/:categoryActivityId", bodySanitizer, categoryActivityController.updateOne);
-router.delete("/:categoryActivityId", categoryActivityController.deleteOne);
+router.get("/", errorCatcher(categoryActivityController.findAll));
+router.get("/:categoryActivityId", errorCatcher(categoryActivityController.findOne));
+router.post("/", bodySanitizer, errorCatcher(categoryActivityController.createOne));
+router.patch("/:categoryActivityId", bodySanitizer, errorCatcher(categoryActivityController.updateOne));
+router.delete("/:categoryActivityId", errorCatcher(categoryActivityController.deleteOne));
 
 module.exports = router;
