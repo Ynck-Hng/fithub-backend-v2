@@ -6,7 +6,7 @@ const { CommentArticle, Article, User } = require("./../../models");
 const commentArticleController = {
     findAllArticleComments: async (req, res) => {
         const articleId = req.params.articleId;
-        console.log(articleId);
+
         const result = await CommentArticle.findAll({
             where: {
                 article_id: articleId

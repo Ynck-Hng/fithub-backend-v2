@@ -1,5 +1,7 @@
 const error = require("debug")("error");
+const ActivityUser = require("../../models/schemas/activities/ActivityUser");
 const randomNumber = require("../../utils/randomNumber");
+const userWasActive = require("../../utils/userValidations/userWasActive");
 const { Challenge, User, ChallengeUser } = require("./../../models");
 
 const challengeController = {
@@ -100,10 +102,17 @@ const challengeController = {
                 date_assigned: formattedDate
             }
         });
-
+        
         if(findChallengeUserByDate){
             return res.status(409).json("User already received a daily challenge.");
         };
+        
+        const wasUserActiveYesterday = userWasActive("yesterday", userId, ChallengeUser, ActivityUser, findUser);
+        if(!wasUserActiveYesterday){
+            findUser.login_streak = 0;
+        };
+
+        findUser.login_streak += 1;
 
         const allChallenges = await Challenge.findAll();
 
@@ -113,7 +122,8 @@ const challengeController = {
             user_id: userId,
             challenge_id: allChallenges[randomChallengeNumber].id,
             date_assigned: formattedDate
-        }
+        };
+
         // Assign challenge to user
         // and update challenge_id Foreign Key in user
         findUser.challenge_id = allChallenges[randomChallengeNumber].id;

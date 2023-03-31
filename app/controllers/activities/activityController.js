@@ -1,8 +1,9 @@
 const error = require("debug")("error");
 const ActivityUser = require("../../models/schemas/activities/ActivityUser");
 const totalDailyCaloriesCalculator = require("../../utils/calories/totalDailyCaloriesCalculator");
-const isSameIdOrAdmin = require("../../utils/isSameIdOrAdmin");
-const { Activity, CategoryActivity, User } = require("./../../models");
+const isSameUserId = require("../../utils/isSameUserId");
+const userWasActive = require("../../utils/userValidations/userWasActive");
+const { Activity, CategoryActivity, User, ChallengeUser } = require("./../../models");
 const caloriesCalculator = require("./../../utils/calories/caloriesCalculator");
 
 const activityController = {
@@ -142,8 +143,8 @@ const activityController = {
     assignActivityToUser: async (req, res) => {
         // post
         const {user_id, activity_id, duration} = req.body;
-        
-        isSameIdOrAdmin(req, res, user_id);
+        console.log(user_id);
+        isSameUserId(req, res, user_id);
 
         const findUser = await User.findByPk(user_id);
         if(!findUser) {
@@ -156,14 +157,23 @@ const activityController = {
             return res.status(404).json("Activity cannot be found.");
         };
 
-        const date = new Date();
-        const formattedDate = date.toISOString().slice(0, 10);
+        const wasUserActiveYesterday = userWasActive(user_id, ChallengeUser, ActivityUser, findUser);
+        
+        if(!wasUserActiveYesterday){
+            findUser.login_streak = 0;
+        };
+
+        findUser.login_streak += 1;
+
+        const today = new Date();
+
+        const formattedToday = today.toISOString().slice(0, 10);
 
         const findAllUserActivityByDate = await ActivityUser.findAll({
             where: {
                 user_id,
                 activity_id,
-                date_assigned: formattedDate
+                date_assigned: formattedToday
             }
         });
 
@@ -176,7 +186,7 @@ const activityController = {
         if(userDailyCaloriesTotal > 1000){
             // If user burned more than 1000 today
             // do nothing
-        }else if( userDailyCaloriesTotal + caloriesFromActivity > 1000){
+        }else if(userDailyCaloriesTotal + caloriesFromActivity > 1000){
             // If the total calories burned today + calories burned from activty is more than 1000
             // then only add the required amount to reach 1000 cap
             // to the user exp
@@ -194,7 +204,7 @@ const activityController = {
             activity_id,
             duration,
             calories: caloriesFromActivity,
-            date_assigned: formattedDate
+            date_assigned: formattedToday
         }
 
         await ActivityUser.create(newActivity);
@@ -203,11 +213,13 @@ const activityController = {
     },
 
     removeActivityFromUser: async (req, res) => {
+        
         const userId = req.params.userId;
 
-        isSameIdOrAdmin(req, res, userId);
+        isSameUserId(req, res, userId);
 
         const activityId = req.params.activityId;
+
         const activityUserId = req.params.activityUserId;
 
         const findUser = await User.findByPk(userId);
@@ -248,7 +260,6 @@ const activityController = {
             // calculate total amount of calories burned before registering this activity
             const userDailyCaloriesTotalBeforeActivity = userDailyCaloriesTotal - caloriesFromActivity;
 
-
             if(userDailyCaloriesTotalBeforeActivity > 1000){
                 // if calories before activity more than 1000, only delete entry
                 await findUserActivity.destroy();
@@ -258,17 +269,36 @@ const activityController = {
                 // it will return a negative number
                 const differenceFromMaxExp = userDailyCaloriesTotalBeforeActivity - 1000;
                 findUser.xp += differenceFromMaxExp;
-                // save modification
-                await findUser.save();
                 // delete entry
                 await findUserActivity.destroy();
+
+                // check if the user had an activity today
+                const findUserActivityByDateAfterUpdate = userWasActive("today", userId, ChallengeUser, ActivityUser);
+
+                if(!findUserActivityByDateAfterUpdate){
+                    findUser.login_streak -= 1
+                }
+
+                   // save modification
+                await findUser.save();
+
             } else {
                 // default case, substract the full calories value
                 findUser.xp -= caloriesFromActivity;
-                await findUser.save();
                 await findUserActivity.destroy();
+
+                // check if user had an activity today
+                const findUserActivityByDateAfterUpdate = userWasActive("today", userId, ChallengeUser, ActivityUser);
+
+                if(!findUserActivityByDateAfterUpdate){
+                    findUser.login_streak -= 1
+                }
+
+                   // save modification
+                await findUser.save();
             }
-        }
+        };
+
         res.status(200).json("Activity removed from user !");
     }
 }
