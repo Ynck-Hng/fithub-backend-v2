@@ -3,7 +3,7 @@ const { User } = require("./../../models");
 const emailValidator = require("email-validator");
 const bcrypt = require("bcrypt");
 const passwordChecker = require("../../utils/userValidations/passwordChecker");
-
+const fs = require("fs");
 const userController = {
     findAll: async (req, res) => {
         // find all except password
@@ -301,6 +301,20 @@ const userController = {
 
         res.status(200).json("Logged out !");
         
+    },
+
+    test: (req,res) => {
+        console.log(req.body);
+        console.log("YEP");
+        res.status(200).json("YEP");
+    },
+
+    sendImage: (req, res)=> {
+        
+        const image = fs.readFileSync("uploads/b39ed820e5bb9004e3e278e28d593f28");
+        const bufferImage = Buffer.from(image).toString("base64");
+        const dataURI = `data:image/jpeg;base64,${bufferImage}`;
+        res.json(dataURI);
     }
 }
 
