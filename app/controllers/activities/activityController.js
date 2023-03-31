@@ -19,11 +19,6 @@ const activityController = {
         res.status(200).json(result);
     },
 
-    findOne: async (req, res) => {
-        // do we need it ? have to discuss
-
-    },
-
     createOne: async (req, res) => {
         const {code, label, met, category_activity_id} = req.body;
 
@@ -141,9 +136,9 @@ const activityController = {
     },
 
     assignActivityToUser: async (req, res) => {
-        // post
+    
         const {user_id, activity_id, duration} = req.body;
-        console.log(user_id);
+
         isSameUserId(req, res, user_id);
 
         const findUser = await User.findByPk(user_id);
@@ -213,7 +208,7 @@ const activityController = {
     },
 
     removeActivityFromUser: async (req, res) => {
-        
+
         const userId = req.params.userId;
 
         isSameUserId(req, res, userId);
@@ -301,6 +296,6 @@ const activityController = {
 
         res.status(200).json("Activity removed from user !");
     }
-}
+};
 
 module.exports = activityController;

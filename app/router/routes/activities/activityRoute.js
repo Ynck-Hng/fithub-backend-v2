@@ -8,7 +8,6 @@ const isAuthenticated = require("./../../../utils/userValidations/isAuthenticate
 // Currently on route http://localhost:PORT/activity/
 
 router.get("/", errorCatcher(activityController.findAll));
-router.get("/:activityId", errorCatcher(activityController.findOne));
 router.post("/", isAdmin, bodySanitizer, errorCatcher(activityController.createOne));
 router.patch("/:activityId", isAdmin, bodySanitizer, errorCatcher(activityController.updateOne));
 router.delete("/:activityId", isAdmin, errorCatcher(activityController.deleteOne));
