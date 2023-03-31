@@ -1,5 +1,6 @@
 const error = require("debug")("error");
 const ActivityUser = require("../../models/schemas/activities/ActivityUser");
+const isSameUserId = require("../../utils/isSameUserId");
 const randomNumber = require("../../utils/randomNumber");
 const userWasActive = require("../../utils/userValidations/userWasActive");
 const { Challenge, User, ChallengeUser } = require("./../../models");
@@ -107,14 +108,11 @@ const challengeController = {
             return res.status(409).json("User already received a daily challenge.");
         };
         
-        const wasUserActiveYesterday = userWasActive("yesterday", userId, ChallengeUser, ActivityUser, findUser);
-        if(!wasUserActiveYesterday){
-            findUser.login_streak = 0;
-        };
-
-        findUser.login_streak += 1;
-
         const allChallenges = await Challenge.findAll();
+
+        if(allChallenges.length === 0){
+            return res.status(404).json("Challenge cannot be found.");
+        };
 
         const randomChallengeNumber = randomNumber(allChallenges.length);
 
@@ -137,6 +135,8 @@ const challengeController = {
     challengeChecker: async (req, res) => {
 
         const userId = req.params.userId;
+
+        isSameUserId(req, res, userId);
 
         const {challengeId} = req.body;
 
@@ -168,6 +168,14 @@ const challengeController = {
             case 'no':
                 findChallengeUserByDate.completed = 'yes';
                 findChallengeUserByDate.save();
+                const wasUserActiveYesterday = userWasActive("yesterday", userId, ChallengeUser, ActivityUser, findUser);
+                
+                if(!wasUserActiveYesterday){
+                    findUser.login_streak = 0;
+                };
+
+                findUser.login_streak += 1;
+                await findUser.save();
                 break;
             case 'yes':
 
@@ -175,6 +183,15 @@ const challengeController = {
             // set to no
                 findChallengeUserByDate.completed = 'no';
                 findChallengeUserByDate.save();
+
+                const checkWasUserActiveYesterday = userWasActive("yesterday", userId, ChallengeUser, ActivityUser, findUser);
+                
+                if(!checkWasUserActiveYesterday){
+                    findUser.login_streak = 0;
+                };
+
+                findUser.login_streak -= 1;
+                await findUser.save();
                 break;
         }
         res.status(200).json("Challenge completion updated !");
