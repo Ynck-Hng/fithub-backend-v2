@@ -6,4 +6,7 @@ BEGIN;
 ALTER TABLE "user"
     DROP COLUMN "image_path";
 
+ALTER TABLE "user"
+    DROP COLUMN "image_mimetype";
+
 COMMIT;

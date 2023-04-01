@@ -3,6 +3,6 @@
 BEGIN;
 
 -- XXX Add verifications here.
-SELECT "image_path" FROM "user" WHERE false;
+SELECT "image_path", "image_mimetype" FROM "user" WHERE false;
 
 ROLLBACK;

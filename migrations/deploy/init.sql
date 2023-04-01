@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS "user" (
     role user_role DEFAULT 'user',
     email TEXT NOT NULL UNIQUE,
     weight INTEGER NOT NULL,
+    age INTEGER NOT NULL,
     gender user_gender DEFAULT 'non-spécifié',
     challenge_id INT REFERENCES challenge(id) DEFAULT NULL,
     xp INT DEFAULT 0,
