@@ -64,6 +64,13 @@ User.init({
             isInt: true
         }
     },
+    age: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        validate: {
+            isInt: true
+        }
+    },
     gender: {
         type: Sequelize.ENUM('femme', 'homme', 'non-spécifié'),
         defaultValue: 'non-spécifié',
@@ -85,6 +92,11 @@ User.init({
         type: Sequelize.TEXT,
         allowNull: true,
         defaultValue: null
+    },
+    image_mimetype: {
+        type: Sequelize.TEXT,
+        allowNull: true,
+        defaultValue: true
     },
     created_at: Sequelize.DATE,
     updated_at: Sequelize.DATE

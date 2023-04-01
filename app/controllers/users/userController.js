@@ -42,7 +42,7 @@ const userController = {
         if(!result){
             return res.status(404).json("User cannot be found.");
         };
-
+        console.log(result.image_path);
         res.status(200).json(result);
     },
 
@@ -51,11 +51,11 @@ const userController = {
         // checks that every fields have been properly received
         console.log("yo", req.body);
         console.log("wesh", req.file)
-        /*
-        if(!firstname || !lastname || !nickname || !password || !passwordConfirm || !weight || !email || !gender || !age){
-            return res.status(400).json("firstname, lastname, nickname, password, passwordConfirm, weight, email, gender are required.");
+        
+        if(!firstname || !lastname || !nickname || !password || !passwordConfirm || !weight || !email || !age){
+            return res.status(400).json("firstname, lastname, nickname, password, passwordConfirm, weight, email, age are required.");
         }
-        */
+
         // checks if nickname is already taken
         const findUserNickname = await User.findOne({
             where: {
@@ -121,9 +121,11 @@ const userController = {
             nickname,
             password: hashedPassword,
             weight,
+            age,
             email,
             gender,
-            image_path: req.file.path || null
+            image_path: req.file.path || null,
+            image_mimetype: req.file.mimetype || null
         };
         // store in the database
         await User.create(newUser);
@@ -135,7 +137,7 @@ const userController = {
 
         isSameIdOrAdmin(req, res, userId);
 
-        const {firstname, lastname, nickname, phone, password, passwordConfirm, role, weight, email, gender} = req.body;
+        const {firstname, lastname, nickname, phone, password, passwordConfirm, role, age, weight, email, gender} = req.body;
 
         const findUser = await User.findByPk(userId);
 
@@ -231,6 +233,15 @@ const userController = {
             findUser.gender = gender;
         };
 
+        if(age){
+            findUser.age = age;
+        };
+
+        if(req.file.path){
+            findUser.image_path = req.file.path;
+            findUser.image_mimetype = req.file.mimetype;
+        }
+
         // update the user data
         await findUser.save();
 
@@ -311,6 +322,7 @@ const userController = {
     test: (req,res) => {
         console.log(req.body);
         console.log(`${req.file.path}`);
+        console.log(req.file);
         console.log("YEP");
         res.status(200).json("YEP");
     },

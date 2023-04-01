@@ -6,7 +6,21 @@ const bodySanitizer = require("./../../../utils/bodySanitizer");
 const isAuthenticated = require("./../../../utils/userValidations/isAuthenticated");
 const isAdmin = require("../../../utils/userValidations/isAdmin");
 const multer = require("multer");
-const upload = multer({dest: "uploads/"});
+const path = require("path");
+const upload = multer({
+        dest: "uploads/",
+        fileFilter: function(req, file, cb){
+            const filetype = /jpeg|jpg|png/;
+            const mimetype = filetype.test(file.mimetype);
+            const extname = filetype.test(path.extname(file.originalname).toLowerCase());
+            if(mimetype && extname){
+                return cb(null, true)
+            } else {
+                return cb(new Error('Only jpeg, jpg and png files are accepted.'));
+            }
+        }
+    }
+);
 // Currently on route http://localhost:PORT/user/
 
 router.get("/", errorCatcher(userController.findAll));
