@@ -11,7 +11,7 @@ const upload = multer({dest: "uploads/"});
 
 router.get("/", errorCatcher(userController.findAll));
 router.get("/:userId", errorCatcher(userController.findOne));
-router.post("/", bodySanitizer, errorCatcher(userController.createOne));
+router.post("/", bodySanitizer, upload.single('image'), errorCatcher(userController.createOne));
 router.patch("/:userId", isAuthenticated, bodySanitizer, errorCatcher(userController.updateOne));
 router.delete("/:userId", isAdmin, bodySanitizer, errorCatcher(userController.deleteOne));
 router.post("/session/login", errorCatcher(userController.login));

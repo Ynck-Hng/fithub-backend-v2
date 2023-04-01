@@ -12,7 +12,7 @@ const userController = {
                 exclude: ['password']
             },
         });
-        console.log(result);
+
         // Must test result.length because findAll always returns [] if no users found
         if(result.length === 0){
             return res.status(404).json("User cannot be found.");
@@ -47,18 +47,22 @@ const userController = {
     },
 
     createOne: async (req, res) => {
-        const {firstname, lastname, nickname, phone, password, passwordConfirm, weight, email, gender} = req.body;
-
+        const {firstname, lastname, nickname, phone, password, passwordConfirm, weight, age, email, gender} = req.body;
         // checks that every fields have been properly received
-        if(!firstname || !lastname || !nickname || !password || !passwordConfirm || !weight || !email || !gender){
+        console.log("yo", req.body);
+        console.log("wesh", req.file)
+        /*
+        if(!firstname || !lastname || !nickname || !password || !passwordConfirm || !weight || !email || !gender || !age){
             return res.status(400).json("firstname, lastname, nickname, password, passwordConfirm, weight, email, gender are required.");
         }
+        */
         // checks if nickname is already taken
         const findUserNickname = await User.findOne({
             where: {
                 nickname
             }
         });
+
         // if taken, return 409 conflict
         if(findUserNickname){
             return res.status(409).json("Nickname already exists.");
@@ -105,7 +109,7 @@ const userController = {
         const checkPassword = passwordChecker(password);
 
         if(!checkPassword){
-            return res.status(400).json("Secure your password with at least a capitalized letter, a symble and a number.");
+            return res.status(400).json("Secure your password with at least a capitalized letter, a symbole and a number.");
         };
 
         // hash the password
@@ -118,7 +122,8 @@ const userController = {
             password: hashedPassword,
             weight,
             email,
-            gender
+            gender,
+            image_path: req.file.path || null
         };
         // store in the database
         await User.create(newUser);
@@ -305,6 +310,7 @@ const userController = {
 
     test: (req,res) => {
         console.log(req.body);
+        console.log(`${req.file.path}`);
         console.log("YEP");
         res.status(200).json("YEP");
     },

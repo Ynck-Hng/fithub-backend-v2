@@ -81,6 +81,11 @@ User.init({
         type: Sequelize.ENUM('publique', 'privé'),
         defaultValue: 'publique'
     },
+    image_path: {
+        type: Sequelize.TEXT,
+        allowNull: true,
+        defaultValue: null
+    },
     created_at: Sequelize.DATE,
     updated_at: Sequelize.DATE
 }, {
