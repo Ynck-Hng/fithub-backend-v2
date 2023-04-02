@@ -1,4 +1,4 @@
-const error = require("debug")("error");
+const challengeControllerError = require("debug")("controller: challengeControllerError");
 const ActivityUser = require("../../models/schemas/activities/ActivityUser");
 const isSameIdAsUserSessionId = require("../../utils/userValidations/isSameAsUserSessionId");
 const randomNumber = require("../../utils/randomNumber");
@@ -10,6 +10,7 @@ const challengeController = {
         const result = await Challenge.findAll();
 
         if(result.length === 0){
+            challengeControllerError("Error, no challenges found", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("No challenges found.");
         };
 
@@ -22,6 +23,7 @@ const challengeController = {
         const findChallenge = await Challenge.findByPk(challengeId);
         
         if(!findChallenge){
+            challengeControllerError("Error, no challenge found", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("Challenge cannot be found.");
         };
 
@@ -32,6 +34,7 @@ const challengeController = {
         const {label} = req.body;
 
         if(!label){
+            challengeControllerError("Error, label missing.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(400).json("Label is required.");
         };
 
@@ -42,6 +45,7 @@ const challengeController = {
         });
 
         if(findChallengeLabel){
+            challengeControllerError("Error, label exists already.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(409).json("Challenge already exists.");
         };
 
@@ -62,6 +66,7 @@ const challengeController = {
         const findChallenge = await Challenge.findByPk(challengeId);
         
         if(!findChallenge){
+            challengeControllerError("Error, no challenge found", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("Challenge cannot be found.");
         };
 
@@ -73,6 +78,7 @@ const challengeController = {
             });
 
             if(findChallengeLabel){
+                challengeControllerError("Error, label exists already.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
                 return res.status(409).json("Challenge already exists.");
             };
         
@@ -94,6 +100,7 @@ const challengeController = {
 
         const findUser = await User.findByPk(userId)
         if(!findUser){
+            challengeControllerError("Error, user cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("User cannot be found.");
         };
 
@@ -105,12 +112,14 @@ const challengeController = {
         });
         
         if(findChallengeUserByDate){
+            challengeControllerError("Error, user received a daily challenge already.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(409).json("User already received a daily challenge.");
         };
         
         const allChallenges = await Challenge.findAll();
 
         if(allChallenges.length === 0){
+            challengeControllerError("Error, challenge cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("Challenge cannot be found.");
         };
 
@@ -146,6 +155,7 @@ const challengeController = {
 
         const findUser = await User.findByPk(userId);
         if(!findUser){
+            challengeControllerError("Error, user cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("User cannot be found.");
         }
 
@@ -158,6 +168,7 @@ const challengeController = {
         });
 
         if(!findChallengeUserByDate){
+            challengeControllerError("Error, only current day's challenge can be completed.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("Only current day's challenge can be completed.");
         };
 
@@ -170,11 +181,12 @@ const challengeController = {
                 findChallengeUserByDate.save();
                 const wasUserActiveYesterday = userWasActive("yesterday", userId, ChallengeUser, ActivityUser, findUser);
                 
+                findUser.login_streak += 1;
+
                 if(!wasUserActiveYesterday){
                     findUser.login_streak = 0;
                 };
 
-                findUser.login_streak += 1;
                 await findUser.save();
                 break;
             case 'yes':
@@ -186,11 +198,12 @@ const challengeController = {
 
                 const checkWasUserActiveYesterday = userWasActive("yesterday", userId, ChallengeUser, ActivityUser, findUser);
                 
+                findUser.login_streak -= 1;
+
                 if(!checkWasUserActiveYesterday){
                     findUser.login_streak = 0;
                 };
 
-                findUser.login_streak -= 1;
                 await findUser.save();
                 break;
         }
@@ -203,6 +216,7 @@ const challengeController = {
         const findChallenge = await Challenge.findByPk(challengeId);
         
         if(!findChallenge){
+            challengeControllerError("Error, challenge cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("Challenge cannot be found.");
         };
 

@@ -1,4 +1,4 @@
-const error = require("debug")("error");
+const categoryActivityControllerError = require("debug")("controller:categoryActivityControllerError");
 const { CategoryActivity } = require("./../../models");
 
 const categoryActivityController = {
@@ -8,7 +8,8 @@ const categoryActivityController = {
         });
 
         if(result.length === 0){
-            return res.status(404).json("Category cannot be found.");
+            categoryActivityControllerError("Error, categories cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
+            return res.status(404).json("Categories cannot be found.");
         }
 
         res.status(200).json(result);
@@ -22,6 +23,7 @@ const categoryActivityController = {
         });
         
         if(!findCategoryActivity){
+            activityControllerError("Error, category cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("Category cannot be found.");
         }
 
@@ -31,6 +33,11 @@ const categoryActivityController = {
     createOne: async (req, res) => {
         const {label} = req.body;
 
+        if(!label){
+            activityControllerError("Error, label is required.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
+            return res.status(400).json("Label is required.");
+        };
+
         const findCategoryActivityLabel = await CategoryActivity.findOne({
             where: {
                 label
@@ -38,6 +45,7 @@ const categoryActivityController = {
         });
 
         if(findCategoryActivityLabel){
+            activityControllerError("Error, no activities found", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(409).json("Label already exists.");
         };
 
@@ -57,6 +65,7 @@ const categoryActivityController = {
         const findCategoryActivity = await CategoryActivity.findByPk(categoryActivityId);
 
         if(!findCategoryActivity){
+            activityControllerError("Error, category cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("Category cannot be found.");
         };
 
@@ -68,7 +77,8 @@ const categoryActivityController = {
             });
             
             if(findCategoryActivityLabel){
-                return res.status(409).json("Label already exists.");
+                activityControllerError("Error, label already exists.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
+                return res.status(409).json("Category already exists.");
             };
 
             findCategoryActivity.label = label;
@@ -85,6 +95,7 @@ const categoryActivityController = {
         const findCategoryActivity = await CategoryActivity.findByPk(categoryActivityId);
 
         if(!findCategoryActivity){
+            activityControllerError("Error, category cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("Category cannot be found.");
         };
 

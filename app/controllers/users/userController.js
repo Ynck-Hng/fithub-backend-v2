@@ -1,4 +1,4 @@
-const error = require("debug")("error");
+const userControllerError = require("debug")("controller:userControllerError");
 const { User } = require("./../../models");
 const emailValidator = require("email-validator");
 const bcrypt = require("bcrypt");
@@ -17,7 +17,8 @@ const userController = {
 
         // Must test result.length because findAll always returns [] if no users found
         if(result.length === 0){
-            return res.status(404).json("User cannot be found.");
+            userControllerError("Error, users cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);;
+            return res.status(404).json("Users cannot be found.");
         };
 
         result.map((user) => {
@@ -53,6 +54,7 @@ const userController = {
         });
         // if user not found, return 404
         if(!result){
+            userControllerError("Error, user cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("User cannot be found.");
         };
         
@@ -72,6 +74,7 @@ const userController = {
         // checks that every fields have been properly received
         
         if(!firstname || !lastname || !nickname || !password || !passwordConfirm || !weight || !email || !age){
+            userControllerError("Error, missing required fields.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(400).json("firstname, lastname, nickname, password, passwordConfirm, weight, email, age are required.");
         }
 
@@ -84,6 +87,7 @@ const userController = {
 
         // if taken, return 409 conflict
         if(findUserNickname){
+            userControllerError("Error, nickname already exists.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(409).json("Nickname already exists.");
         };
 
@@ -91,6 +95,7 @@ const userController = {
         const checkEmail = emailValidator.validate(email);
 
         if(!checkEmail){
+            userControllerError("Error, invalid email.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("Email is incorrect.");
         };
 
@@ -101,6 +106,7 @@ const userController = {
         });
 
         if(findUserEmail){
+            userControllerError("Error, email already used.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(409).json("Email already exists.");
         }
 
@@ -112,6 +118,7 @@ const userController = {
             });
 
             if(findUserPhone){
+                userControllerError("Error, phone number already linked to an account.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
                 return res.status(409).json("Number already linked to an account.");
             }
 
@@ -120,6 +127,7 @@ const userController = {
 
         
         if(password !== passwordConfirm){
+            userControllerError("Error, password and passwordConfirm do not match.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(400).json("Password and passwordConfirm do not match.");
         };
 
@@ -128,6 +136,7 @@ const userController = {
         const checkPassword = passwordChecker(password);
 
         if(!checkPassword){
+            userControllerError("Error, unsafe password.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(400).json("Secure your password with at least a capitalized letter, a symbole and a number.");
         };
 
@@ -169,6 +178,7 @@ const userController = {
         const findUser = await User.findByPk(userId);
 
         if(!findUser){
+            userControllerError("Error, user cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("User cannot be found.");
         };
 
@@ -189,6 +199,7 @@ const userController = {
             });
 
             if(findUserPhone){
+                userControllerError("Error, phone number already linked to an account.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
                 return res.status(409).json("Number already linked to an account.");
             }
 
@@ -203,6 +214,7 @@ const userController = {
             });
 
             if(findUserNickname){
+                userControllerError("Error, nickname already taken.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
                 return res.status(409).json("Nickname already exists.");
             };
 
@@ -214,11 +226,13 @@ const userController = {
         if(password){
 
             if(password !== passwordConfirm){
+                userControllerError("Error, password and passwordConfirm do not match.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
                 return res.status(400).json("Password and passwordConfirm do not match.");
             };
 
             const checkPassword = passwordChecker(password);
             if(!checkPassword){
+                userControllerError("Error, unsafe password.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
                 return res.status(400).json("Secure your password with at least a capitalized letter, a symbol and a number.");
             };
 
@@ -240,6 +254,7 @@ const userController = {
             const checkEmail = emailValidator.validate(email);
             
             if(!checkEmail){
+                userControllerError("Error, invalid email.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
                 return res.status(409).json("Email is incorrect.");
             };
             
@@ -250,6 +265,7 @@ const userController = {
             });
             
             if(findUserEmail){
+                userControllerError("Error, email already used.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
                 return res.status(409).json("Email already exists.");
             };
             
@@ -284,6 +300,7 @@ const userController = {
         const findUser = await User.findByPk(userId);
         // make sure that user exists before deleting
         if(!findUser){
+            userControllerError("Error, user cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("User cannot be found.");
         };
 
@@ -296,12 +313,14 @@ const userController = {
         // If user already logged in, then return 403 forbidden
         const findSession = req.session.user;
         if(findSession){
+            userControllerError("Error, already logged in.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(403).json("Access denied, user is already logged in.");
         }
 
         const {email, password} = req.body;
         // make sure that both email & password have been sent
         if(!email || !password){
+            userControllerError("Error, email or password missing.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(400).json("Email and password are both required.");
         };
         // make sure that user exists
@@ -315,12 +334,14 @@ const userController = {
         // if user does not exist, return 404
 
         if(!findUser){
+            userControllerError("Error, email or password is incorrect.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("Email or password is incorrect.");
         };
 
         const isPasswordCorrect = bcrypt.compare(password, findUser.password);
         
         if(!isPasswordCorrect){
+            userControllerError("Error, email or password is incorrect.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(400).json("Email or password is incorrect.");
         };
         // creates a user session
@@ -340,6 +361,7 @@ const userController = {
         // make sure that user exists before logging out
         const findUser = await User.findByPk(findSession.id);
         if(!findUser){
+            userControllerError("Error, user cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("User cannot be found.");
         };
 

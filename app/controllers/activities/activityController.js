@@ -1,4 +1,4 @@
-const error = require("debug")("error");
+const activityControllerError = require("debug")("controller: activityControllerError");
 const ActivityUser = require("../../models/schemas/activities/ActivityUser");
 const totalDailyCaloriesCalculator = require("../../utils/calories/totalDailyCaloriesCalculator");
 const isSameIdAsUserSessionId = require("./../../utils/userValidations/isSameAsUserSessionId");
@@ -13,7 +13,8 @@ const activityController = {
         });
 
         if(result.length === 0){
-            return res.status(404).json("Activity cannot be found.");
+            activityControllerError("Error, no activities found", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
+            return res.status(404).json("Activities cannot be found.");
         };
 
         res.status(200).json(result);
@@ -23,6 +24,7 @@ const activityController = {
         const {code, label, met, category_activity_id} = req.body;
 
         if(!code || !label || !met || !category_activity_id){
+            activityControllerError("Error, missing required fields.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(400).json("Code, label, MET and category are required.");
         };
 
@@ -34,6 +36,7 @@ const activityController = {
         });
 
         if(findActivityCode){
+            activityControllerError("Error, code already exists.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(409).json("Code already exists.");
         };
 
@@ -45,12 +48,14 @@ const activityController = {
         });
 
         if(findActivityLabel){
-            return res.status(409).json("Label already exists.");
+            activityControllerError("Error, label already exists.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
+            return res.status(409).json("Activity already exists.");
         };
 
         const findCategoryActivity = await CategoryActivity.findByPk(category_activity_id);
         
         if(!findCategoryActivity){
+            activityControllerError("Error, category cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("Category cannot be found.");
         };
 
@@ -74,6 +79,7 @@ const activityController = {
         const findActivity = await Activity.findByPk(activityId);
 
         if(!findActivity){
+            activityControllerError("Error, activity cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("Activity cannot be found.");
         };
 
@@ -85,6 +91,7 @@ const activityController = {
             });
 
             if(findActivityCode){
+                activityControllerError("Error, code already exists.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
                 return res.status(409).json("Code already exists.");
             };
             findActivity.code = code;
@@ -98,6 +105,7 @@ const activityController = {
             });
 
             if(findActivityLabel){
+                activityControllerError("Error, label already exists.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
                 return res.status(409).json("Label already exists.");
             };
             findActivity.label = label;
@@ -111,6 +119,7 @@ const activityController = {
             const findCategoryActivity = await CategoryActivity.findByPk(category_activity_id);
         
             if(!findCategoryActivity){
+                activityControllerError("Error, category cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
                 return res.status(404).json("Category cannot be found.");
             };
             findActivity.category_activity_id = category_activity_id;
@@ -127,6 +136,7 @@ const activityController = {
         const findActivity = await Activity.findByPk(activityId);
 
         if(!findActivity){
+            activityControllerError("Error, activity cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("Activity cannot be found.");
         };
 
@@ -143,22 +153,25 @@ const activityController = {
 
         const findUser = await User.findByPk(user_id);
         if(!findUser) {
+            activityControllerError("Error, user cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("User cannot be found.");
         };
 
         const findActivity = await Activity.findByPk(activity_id);
         
         if(!findActivity){
+            activityControllerError("Error, activity cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("Activity cannot be found.");
         };
 
         const wasUserActiveYesterday = userWasActive(user_id, ChallengeUser, ActivityUser, findUser);
         
+        findUser.login_streak += 1;
+
         if(!wasUserActiveYesterday){
             findUser.login_streak = 0;
         };
 
-        findUser.login_streak += 1;
 
         const today = new Date();
 
@@ -220,18 +233,21 @@ const activityController = {
         const findUser = await User.findByPk(userId);
 
         if(!findUser){
+            activityControllerError("Error, user cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("User cannot be found.");
         };
 
         const findActivity = await Activity.findByPk(activityId);
 
         if(!findActivity){
+            activityControllerError("Error, activity cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("Activity cannot be found.");;
         };
 
         const findUserActivity = await ActivityUser.findByPk(activityUserId);
 
         if(!findUserActivity) {
+            activityControllerError("Error, activity not assigned to user.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("Activity already not assigned to user.");
         };
 
