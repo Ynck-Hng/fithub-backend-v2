@@ -12,6 +12,6 @@ router.post("/", isAdmin, bodySanitizer, errorCatcher(activityController.createO
 router.patch("/:activityId", isAdmin, bodySanitizer, errorCatcher(activityController.updateOne));
 router.delete("/:activityId", isAdmin, errorCatcher(activityController.deleteOne));
 router.post("/user", isAuthenticated, bodySanitizer, errorCatcher(activityController.assignActivityToUser));
-router.delete("/user/:userId/:activityId/:activityUserId", isAuthenticated, errorCatcher(activityController.removeActivityFromUser));
+router.delete("/user/:userId/:activityUserId", isAuthenticated, errorCatcher(activityController.removeActivityFromUser));
 
 module.exports = router;

@@ -12,6 +12,14 @@
         {
             "name": "Activity",
             "description": "HTTP requests concerning activities."
+        },
+        {
+            "name": "Category activity",
+            "description": "HTTP requests concerning category activities."
+        },
+        {
+            "name": "Challenge",
+            "description": "HTTP requests concerning challenges."
         }
     ],
     "paths": {
@@ -70,7 +78,7 @@
                     {
                         "name": "userId",
                         "in": "path",
-                        "description": "ID of user to return",
+                        "description": "User's id to find.",
                         "required": "true",
                         "schema": {
                             "type": "integer"
@@ -97,7 +105,7 @@
                     {
                         "name": "userId",
                         "in": "path",
-                        "description": "ID of user to return",
+                        "description": "User's id to update.",
                         "required": "true",
                         "schema": {
                             "type": "integer"
@@ -211,6 +219,203 @@
                         "description": "User cannot be found."
                     }
                 }
+            }
+        },
+        "/activity": {
+            "get": {
+                "tags": [
+                    "Activity"
+                ],
+                "summary": "Fetch all activities.",
+                "description": "Fetch all activities and their categories.",
+                "operationid": "findAll",
+                "responses": {
+                    "200": {
+                        "description": "OK - Returns a JSON array object with activities' data.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Activity"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Activity not found."
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Activity"
+                ],
+                "summary": "Create a new activity.",
+                "description": "Create a new activity and assign it to a category.",
+                "operationid": "createOne",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema" : {
+                                "$ref": "#/components/schemas/Activity"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK - Activity created !"
+                    },
+                    "404": {
+                        "description": "Activity not found."
+                    },
+                    "409": {
+                        "description": "Activity's label or code already exists."
+                    }
+                }
+            }
+        },
+        "/activity/:activityId": {
+            "patch": {
+                "tags": [
+                    "Activity"
+                ],
+                "summary": "Update an activity.",
+                "description": "Update an activity.",
+                "operationid": "createOne",
+                "parameters": [
+                    {
+                        "name": "activityId",
+                        "in": "path",
+                        "description": "Activity's ID to update",
+                        "required": "true"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema" : {
+                                "$ref": "#/components/schemas/Activity"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK - Activity updated !"
+                    },
+                    "404": {
+                        "description": "Activity not found."
+                    },
+                    "409": {
+                        "description": "Activity's label or code already exists."
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Activity"
+                ],
+                "summary": "Delete an activity.",
+                "description": "Delete an activity and removes it from their category.",
+                "operationid": "createOne",
+                "parameters": [
+                    {
+                        "name": "activityId",
+                        "in": "path",
+                        "description": "Activity's ID to delete",
+                        "required": "true"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema" : {
+                                "$ref": "#/components/schemas/Activity"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK - Activity deleted !"
+                    },
+                    "404": {
+                        "description": "Activity not found."
+                    }
+                }
+            }
+        },
+        "/activity/user": {
+            "post": {
+                "tags": [
+                    "Activity"
+                ],
+                "summary": "Assign an activity to a user.",
+                "description": "Assign an activity",
+                "operationId": "assignActivityToUser",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "query",
+                        "description": "User's id to assign an activity.",
+                        "required": "true"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "description": "Activities' data.",
+                            "schema" : {
+                                "$ref": "#/components/schemas/Activity"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK - Activity assigned to user !"
+                    },
+                    "404": {
+                        "description": "Activity or user not found."
+                    }
+                }
+            }
+        },
+        "/activity/:userId/:activityUserId": {
+            "delete": {
+                "tags": [
+                    "Activity"
+                ],
+                "summary": "Removed an activity from a user.",
+                "description": "Removed an activity from a user.",
+                "operationId": "removeActivityFromUser",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "description": "User's id to remove an activity.",
+                        "required": "true"
+                    },
+                    {
+                        "name": "activityUserId",
+                        "in": "path",
+                        "description": "User's activity and date entry.",
+                        "required": "true"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK - Activity removed from user !"
+                    },
+                    "404": {
+                        "description": "Activity or user not found."
+                    }
+                }
+            }
+        },
+        "/challenge": {
+            "get": {
+                
             }
         }
     },
@@ -342,6 +547,42 @@
                            "type": "string",
                         "example": "$2b$10$wyzLD2T8Jxpb2Fp4r7cgWOapKwfTGkLGMKq1VVwsc2r4LTNUDXIhq",
                         "required": "true"                                                           
+                    }
+                }
+            },
+            "Activity": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "code": {
+                        "type": "string",
+                        "required": "true"
+                    },
+                    "met": {
+                        "type": "number",
+                        "format": "float",
+                        "required": "true"
+                    },
+                    "label": {
+                        "type": "string",
+                        "required": "true"
+                    },
+                    "category_activity_id": {
+                        "type": "integer",
+                        "required": "true"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "default": "2023-04-02 13:39:13.472+02"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "default": "null"
                     }
                 }
             }

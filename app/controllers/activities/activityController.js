@@ -226,8 +226,6 @@ const activityController = {
 
         isSameIdAsUserSessionId(req, res, userId);
 
-        const activityId = req.params.activityId;
-
         const activityUserId = req.params.activityUserId;
 
         const findUser = await User.findByPk(userId);
@@ -235,13 +233,6 @@ const activityController = {
         if(!findUser){
             activityControllerError("Error, user cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("User cannot be found.");
-        };
-
-        const findActivity = await Activity.findByPk(activityId);
-
-        if(!findActivity){
-            activityControllerError("Error, activity cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
-            return res.status(404).json("Activity cannot be found.");;
         };
 
         const findUserActivity = await ActivityUser.findByPk(activityUserId);
@@ -258,7 +249,6 @@ const activityController = {
             const findAllUserActivityByDate = await ActivityUser.findAll({
                 where: {
                     user_id: userId,
-                    activity_id: activityId,
                     date_assigned: formattedDate
                 }
             });
