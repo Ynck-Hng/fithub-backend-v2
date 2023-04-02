@@ -36,7 +36,7 @@ User.init({
         defaultValue: null
     },
     role: {
-        type: Sequelize.TEXT,
+        type: Sequelize.ENUM('user', 'admin'),
         allowNull: false,
         defaultValue: 'user'
     },

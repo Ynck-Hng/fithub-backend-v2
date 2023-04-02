@@ -15,6 +15,8 @@ const productRoute = require("./routes/products/productRoute");
 const commentProductRoute = require("./routes/products/commentProductRoute");
 const categoryProductRoute = require("./routes/products/categoryProductRoute");
 
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocument = require("./../utils/swagger.json");
 
 router.use("/user", userRoute);
 router.use("/article", articleRoute);
@@ -30,5 +32,7 @@ router.use("/company", companyRoute);
 router.use("/product", productRoute);
 router.use("/comment-product", commentProductRoute);
 router.use("/category-product", categoryProductRoute);
+
+router.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 module.exports = router;

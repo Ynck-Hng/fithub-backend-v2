@@ -1,1 +1,351 @@
-// TODO!
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "FitHub - API",
+        "description": "Welcome to FitHub api's documentation. Here you will find all the routes at disposal including details and their HTTP methods."
+    },
+    "tags": [
+        {
+            "name": "User",
+            "description": "HTTP requests concerning users."
+        },
+        {
+            "name": "Activity",
+            "description": "HTTP requests concerning activities."
+        }
+    ],
+    "paths": {
+        "/user": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Fetch all users & their public informations.",
+                "description": "Returns an array of objects with users' informations.",
+                "operationid": "findAll",
+                "responses": {
+                    "200": {
+                        "description": "OK - Returns a JSON object users' data.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User cannot be found."
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Create a new user account.",
+                "description": "Create a new user account based on the data retrieved.",
+                "operationId": "createOne",
+                "requestBody": {
+                    "description": "Add a new user in FitHub.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/User"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/user/:userId": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Fetch one user & their public informations.",
+                "description": "Returns an object with the user's informations.",
+                "operationid": "findOne",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "description": "ID of user to return",
+                        "required": "true",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK - Returns a JSON object with user's data."
+                    },
+                    "404": {
+                        "description": "User cannot be found."
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Patch one user's informations.",
+                "description": "Returns an object with the user's updated informations.",
+                "operationid": "patchOne",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "description": "ID of user to return",
+                        "required": "true",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Add a new user in FitHub.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/User"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK - Returns a JSON object with user's data.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "User cannot be found."
+                    },
+                    "409": {
+                        "description": "Nickname, email or phone already linked to a user."
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Delete a user and their informations.",
+                "description": "Returns a deletion confirmation message.",
+                "operationid": "deleteOne",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "description": "ID of user to return",
+                        "required": "true",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK - Returns a JSON object with 'User deleted !'"
+                    },
+                    "404": {
+                        "description": "User cannot be found."
+                    }
+                }
+            }   
+        },
+        "user/session/login": {
+            "post": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "User's login route.",
+                "description": "User logins by sending email and password for verification.",
+                "operationId": "login",
+                "requestBody": {
+                    "description": "User credentials sent from the client.",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginForm"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK - User logged in !"
+                    },
+                    "401": {
+                        "description": "User already logged in"
+                    },
+                    "404" : {
+                            "description": "User cannot be found."
+                    }                    
+                }
+            }
+        },
+        "user/session/logout": {
+            "get": {
+                "tags": [
+                    "User"
+                ],
+                "summary": "Logs user out.",
+                "description": "Logs user out and deletes their session.",
+                "operationid": "logout",
+                "responses": {
+                    "200": {
+                        "description": "OK - User logged out !"
+                    },
+                    "401": {
+                        "description": "Unauthorized actions, user not logged in."
+                    },
+                    "404": {
+                        "description": "User cannot be found."
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "User": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "firstname": {
+                        "type": "string",
+                        "example": "John",
+                        "required": "true"
+                    },
+                    "lastname": {
+                        "type": "string",
+                        "example": "Doe",
+                        "required": "true"
+                    },
+                    "nickname": {
+                        "type": "string",
+                        "example": "John_Doe_73",
+                        "required": "true"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "0123456789",
+                        "required": "false",
+                        "default": "null"
+                    },
+                    "role": {
+                        "type": "string",
+                        "example": "user",
+                        "enum": [
+                            "user",
+                            "admin"
+                        ],
+                        "default": "user"
+                    },
+                    "login_streak": {
+                        "type": "integer",
+                        "example": 10,
+                        "default": 0
+                    },
+                    "password": {
+                        "type": "string",
+                        "example": "$2b$10$wyzLD2T8Jxpb2Fp4r7cgWOapKwfTGkLGMKq1VVwsc2r4LTNUDXIhq",
+                        "required": "true"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "johndoe73@mymail.com",
+                        "required": "true"
+                    },
+                    "weight": {
+                        "type": "integer",
+                        "example": 64,
+                        "required": "true"
+                    },
+                    "age": {
+                        "type": "integer",
+                        "example": 25,
+                        "required": "true"
+                    },
+                    "gender": {
+                        "type": "string",
+                        "example": "homme",
+                        "enum": [
+                            "femme",
+                            "homme",
+                            "non-spécifié"
+                        ],
+                        "default": "non-spécifié"
+                    },
+                    "challenge_id": {
+                        "type": "integer",
+                        "example": 2,
+                        "default": "null"
+                    },
+                    "xp": {
+                        "type": "integer",
+                        "example": 478054,
+                        "default": "null"
+                    },
+                    "profile_visibility": {
+                        "type": "string",
+                        "example": "privé",
+                        "enum": [
+                            "publique",
+                            "privé"
+                        ],
+                        "default": "publique"
+                    },
+                    "image_path": {
+                        "type": "string",
+                        "example": "dirName/fileName123",
+                        "default": "null"
+                    },
+                    "image_mimetype": {
+                        "type": "string",
+                        "example": "image/jpeg",
+                        "default": "null"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "default": "2023-04-02 13:39:13.472+02"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "default": "null"
+                    }
+                }
+            },
+            "LoginForm": {
+                "type": "object",
+                "properties": {
+                    "email": 
+                    {
+                        "type": "string",
+                        "example": "johndoe73@mymail.com",
+                        "required": "true"
+                    },                            
+                    "password": {
+                           "type": "string",
+                        "example": "$2b$10$wyzLD2T8Jxpb2Fp4r7cgWOapKwfTGkLGMKq1VVwsc2r4LTNUDXIhq",
+                        "required": "true"                                                           
+                    }
+                }
+            }
+        }
+    }
+    
+}
