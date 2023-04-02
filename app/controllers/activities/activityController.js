@@ -1,7 +1,7 @@
 const error = require("debug")("error");
 const ActivityUser = require("../../models/schemas/activities/ActivityUser");
 const totalDailyCaloriesCalculator = require("../../utils/calories/totalDailyCaloriesCalculator");
-const isSameUserId = require("../../utils/isSameUserId");
+const isSameIdAsUserSessionId = require("./../../utils/userValidations/isSameAsUserSessionId");
 const userWasActive = require("../../utils/userValidations/userWasActive");
 const { Activity, CategoryActivity, User, ChallengeUser } = require("./../../models");
 const caloriesCalculator = require("./../../utils/calories/caloriesCalculator");
@@ -139,7 +139,7 @@ const activityController = {
     
         const {user_id, activity_id, duration} = req.body;
 
-        isSameUserId(req, res, user_id);
+        isSameIdAsUserSessionId(req, res, user_id);
 
         const findUser = await User.findByPk(user_id);
         if(!findUser) {
@@ -211,7 +211,7 @@ const activityController = {
 
         const userId = req.params.userId;
 
-        isSameUserId(req, res, userId);
+        isSameIdAsUserSessionId(req, res, userId);
 
         const activityId = req.params.activityId;
 

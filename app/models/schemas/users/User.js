@@ -96,7 +96,7 @@ User.init({
     image_mimetype: {
         type: Sequelize.TEXT,
         allowNull: true,
-        defaultValue: true
+        defaultValue: null
     },
     created_at: Sequelize.DATE,
     updated_at: Sequelize.DATE

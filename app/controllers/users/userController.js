@@ -4,6 +4,7 @@ const emailValidator = require("email-validator");
 const bcrypt = require("bcrypt");
 const passwordChecker = require("../../utils/userValidations/passwordChecker");
 const fs = require("fs");
+const isSameIdAsUserSessionId = require("./../../utils/userValidations/isSameAsUserSessionId");
 
 const userController = {
     findAll: async (req, res) => {
@@ -18,6 +19,17 @@ const userController = {
         if(result.length === 0){
             return res.status(404).json("User cannot be found.");
         };
+
+        result.map((user) => {
+            const userData = user.get({plain: true});
+            if(!userData.image_path){
+                return userData.dataURI = null;
+            };
+
+            const image = fs.readFileSync(`${userData.image_path}`);
+            const imageBuffer = Buffer.from(image).toString("base64");
+            userData.dataURI = `data:${userData.image_mimetype};base64,${imageBuffer}`;
+        })
 
         res.status(200).json(result);
     },
@@ -43,15 +55,21 @@ const userController = {
         if(!result){
             return res.status(404).json("User cannot be found.");
         };
-        console.log(result.image_path);
-        res.status(200).json(result);
+        
+        const resultDataWithImage = result.get({plain: true});
+
+        if(resultDataWithImage.image_path){
+            const image = fs.readFileSync(`${result.image_path}`);
+            const imageBuffer = Buffer.from(image).toString("base64");
+            resultDataWithImage.dataURI = `data:${resultDataWithImage.image_mimetype};base64,${imageBuffer}`;
+        }
+
+        res.status(200).json(resultDataWithImage);
     },
 
     createOne: async (req, res) => {
         const {firstname, lastname, nickname, phone, password, passwordConfirm, weight, age, email, gender} = req.body;
         // checks that every fields have been properly received
-        console.log("yo", req.body);
-        console.log("wesh", req.file)
         
         if(!firstname || !lastname || !nickname || !password || !passwordConfirm || !weight || !email || !age){
             return res.status(400).json("firstname, lastname, nickname, password, passwordConfirm, weight, email, age are required.");
@@ -115,13 +133,13 @@ const userController = {
 
         // hash the password
         const hashedPassword = bcrypt.hashSync(password, 10);
-
         let filePath;
-
-        if(req.file){
+        let fileMimetype;
+        if(req.file !== undefined){
             const sourceFile = req.file.path;
             filePath = `uploads/${req.file.filename}`;
             fs.copyFileSync(sourceFile, filePath);
+            fileMimetype = req.file.mimetype;
         }
 
         const newUser = {
@@ -133,20 +151,18 @@ const userController = {
             age,
             email,
             gender,
-            image_path: filePath || null,
-            image_mimetype: req.file.mimetype || null
+            image_path: null || filePath,
+            image_mimetype: null || fileMimetype
         };
-
-        console.log(newUser);
         // store in the database
-        //await User.create(newUser);
+        await User.create(newUser);
         res.status(201).json("User created !");
     },
 
     updateOne: async (req, res) => {
         const userId = req.params.userId;
 
-        isSameIdOrAdmin(req, res, userId);
+        isSameIdAsUserSessionId(req, res, userId);
 
         const {firstname, lastname, nickname, phone, password, passwordConfirm, role, age, weight, email, gender} = req.body;
 
@@ -332,22 +348,6 @@ const userController = {
         res.status(200).json("Logged out !");
         
     },
-
-    test: (req,res) => {
-        console.log(req.body);
-        console.log(`${req.file.path}`);
-        console.log(req.file);
-        console.log("YEP");
-        res.status(200).json("YEP");
-    },
-
-    sendImage: (req, res)=> {
-        
-        const image = fs.readFileSync("uploads/b39ed820e5bb9004e3e278e28d593f28");
-        const bufferImage = Buffer.from(image).toString("base64");
-        const dataURI = `data:image/jpeg;base64,${bufferImage}`;
-        res.json(dataURI);
-    }
 }
 
 module.exports = userController;

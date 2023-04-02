@@ -1,6 +1,6 @@
 const error = require("debug")("error");
 const ActivityUser = require("../../models/schemas/activities/ActivityUser");
-const isSameUserId = require("../../utils/isSameUserId");
+const isSameIdAsUserSessionId = require("../../utils/userValidations/isSameAsUserSessionId");
 const randomNumber = require("../../utils/randomNumber");
 const userWasActive = require("../../utils/userValidations/userWasActive");
 const { Challenge, User, ChallengeUser } = require("./../../models");
@@ -136,7 +136,7 @@ const challengeController = {
 
         const userId = req.params.userId;
 
-        isSameUserId(req, res, userId);
+        isSameIdAsUserSessionId(req, res, userId);
 
         const {challengeId} = req.body;
 
