@@ -33,7 +33,7 @@
                 "operationid": "findAll",
                 "responses": {
                     "200": {
-                        "description": "OK - Returns a JSON object users' data.",
+                        "description": " Returns a JSON object users' data.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -55,7 +55,6 @@
                 "description": "Create a new user account based on the data retrieved.",
                 "operationId": "createOne",
                 "requestBody": {
-                    "description": "Add a new user in FitHub.",
                     "content": {
                         "application/json": {
                             "schema": {
@@ -87,7 +86,14 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK - Returns a JSON object with user's data."
+                        "description": " Returns a JSON object with user's data.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
                     },
                     "404": {
                         "description": "User cannot be found."
@@ -113,7 +119,6 @@
                     }
                 ],
                 "requestBody": {
-                    "description": "Add a new user in FitHub.",
                     "content": {
                         "application/json": {
                             "schema": {
@@ -124,7 +129,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "OK - Returns a JSON object with user's data.",
+                        "description": " Returns a JSON object with user's data.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -161,7 +166,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK - Returns a JSON object with 'User deleted !'"
+                        "description": " Returns a JSON object with 'User deleted !'"
                     },
                     "404": {
                         "description": "User cannot be found."
@@ -189,7 +194,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "OK - User logged in !"
+                        "description": " User logged in !"
                     },
                     "401": {
                         "description": "User already logged in"
@@ -210,7 +215,7 @@
                 "operationid": "logout",
                 "responses": {
                     "200": {
-                        "description": "OK - User logged out !"
+                        "description": " User logged out !"
                     },
                     "401": {
                         "description": "Unauthorized actions, user not logged in."
@@ -231,7 +236,7 @@
                 "operationid": "findAll",
                 "responses": {
                     "200": {
-                        "description": "OK - Returns a JSON array object with activities' data.",
+                        "description": " Returns a JSON array object with activities' data.",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -263,7 +268,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "OK - Activity created !"
+                        "description": " Activity created !"
                     },
                     "404": {
                         "description": "Activity not found."
@@ -301,7 +306,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "OK - Activity updated !"
+                        "description": " Activity updated !"
                     },
                     "404": {
                         "description": "Activity not found."
@@ -337,7 +342,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "OK - Activity deleted !"
+                        "description": " Activity deleted !"
                     },
                     "404": {
                         "description": "Activity not found."
@@ -373,7 +378,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "OK - Activity assigned to user !"
+                        "description": " Activity assigned to user !"
                     },
                     "404": {
                         "description": "Activity or user not found."
@@ -405,7 +410,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK - Activity removed from user !"
+                        "description": " Activity removed from user !"
                     },
                     "404": {
                         "description": "Activity or user not found."
@@ -413,9 +418,153 @@
                 }
             }
         },
+        "/category-activity" : {
+            "get": {
+                "tags": [
+                    "Category activity"
+                ],
+                "summary": "Fetch all categories of activities.",
+                "description": "Fetch all categories of activities",
+                "operationId": "findAll",
+                "responses": {
+                    "200": {
+                        "description": " Returns a JSON array object with all categories.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Category activity"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Categories not found."
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Category activity"
+                ],
+                "summary": "Create a new category.",
+                "description": "Create a new activities' category.",
+                "operationId": "createOne",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref":"#/components/schemas/Category activity"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200" : {
+                        "description": "Category created !"
+                    },
+                    "400": {
+                        "description": "Label is required."
+                    },
+                    "409": {
+                        "description": "Category already exists."
+                    }
+                }
+            }
+        },
+        "/category-activity/:categoryActivityId": {
+            "get": {
+                "tags": [
+                    "Category activity"
+                ],
+                "summary": "Fetch one category activity.",
+                "description": "Fetch one category activitiy and their related activities.",
+                "operationid": "findOne",
+                "parameters": [
+                    {
+                        "name": "categoryActivityId",
+                        "in": "path",
+                        "description": "Category's id to find.",
+                        "required": "true",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": " Category updated !",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref":"#/components/schemas/Category activity"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Missing label."
+                    },
+                    "404": {
+                        "description": "Category cannot be found."
+                    },
+                    "409": {
+                        "description": "Category already exists."
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Category activity"
+                ],
+                "summary": "Delete a category",
+                "description": "Delete category of activities.",
+                "operationid": "DeleteOne",
+                "parameters": [
+                    {
+                        "name": "categoryActivityId",
+                        "description": "ID of category to delete.",
+                        "required": "true",
+                        "in": "path"
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Category activity"
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Category activity"
+                ],
+                "summary": "Update a category",
+                "description": "Update category of activities.",
+                "operationid": "updateOne",
+                "parameters": [
+                    {
+                        "name": "categoryActivityId",
+                        "description": "ID of category to update.",
+                        "required": "true",
+                        "in": "path"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Category deleted !"
+                    },
+                    "404": {
+                        "description": "Category cannot be found."
+                    }
+                }
+            }
+        },
         "/challenge": {
             "get": {
-                
+
             }
         }
     },
@@ -559,19 +708,47 @@
                     },
                     "code": {
                         "type": "string",
-                        "required": "true"
+                        "required": "true",
+                        "example": "1070"
                     },
                     "met": {
                         "type": "number",
+                        "example": "14.0",
                         "format": "float",
                         "required": "true"
                     },
                     "label": {
                         "type": "string",
+                        "example": "Aviron",
                         "required": "true"
                     },
                     "category_activity_id": {
                         "type": "integer",
+                        "required": "true",
+                        "example": "2"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "default": "2023-04-02 13:39:13.472+02"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "default": "null"
+                    }
+                }
+            },
+            "Category activity": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "label": {
+                        "type": "string",
+                        "example": "course",
                         "required": "true"
                     },
                     "created_at": {
