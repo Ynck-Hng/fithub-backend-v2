@@ -175,7 +175,11 @@ const userController = {
 
         const {firstname, lastname, nickname, phone, password, passwordConfirm, role, age, weight, email, gender} = req.body;
 
-        const findUser = await User.findByPk(userId);
+        const findUser = await User.findByPk(userId, {
+            attributes: {
+                exclude: ["password"]
+            }
+        });
 
         if(!findUser){
             userControllerError("Error, user cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
@@ -193,6 +197,7 @@ const userController = {
 
         if(phone){
             const findUserPhone = await User.findOne({
+                exclude: ["password"],
                 where: {
                     phone
                 }
@@ -208,6 +213,7 @@ const userController = {
 
         if(nickname){
             const findUserNickname = await User.findOne({
+                exclude: ["password"],
                 where: {
                     nickname
                 }
@@ -259,6 +265,7 @@ const userController = {
             };
             
             const findUserEmail = await User.findOne({
+                exclude: ["password"],
                 where: {
                     email
                 }
@@ -297,7 +304,11 @@ const userController = {
     deleteOne: async (req, res) => {
         const userId = req.params.userId;
 
-        const findUser = await User.findByPk(userId);
+        const findUser = await User.findByPk(userId, {
+            attributes: {
+                exclude: ["password"]
+            }
+        });
         // make sure that user exists before deleting
         if(!findUser){
             userControllerError("Error, user cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
@@ -315,7 +326,7 @@ const userController = {
         if(findSession){
             userControllerError("Error, already logged in.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(403).json("Access denied, user is already logged in.");
-        }
+        };
 
         const {email, password} = req.body;
         // make sure that both email & password have been sent
@@ -325,7 +336,6 @@ const userController = {
         };
         // make sure that user exists
         const findUser = await User.findOne({
-            exclude: ["password"],
             where:{
                 email
             }
@@ -348,7 +358,7 @@ const userController = {
         req.session.user = {
             id: findUser.id,
             role: findUser.role
-        }
+        };
 
         // to discuss what info we want to transmit to the client
         res.status(200).json(findUser);
@@ -359,7 +369,11 @@ const userController = {
         const findSession = req.session.user;
         
         // make sure that user exists before logging out
-        const findUser = await User.findByPk(findSession.id);
+        const findUser = await User.findByPk(findSession.id, {
+            attributes: {
+                exclude: ["password"]
+            }
+        });
         if(!findUser){
             userControllerError("Error, user cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("User cannot be found.");

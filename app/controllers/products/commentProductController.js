@@ -38,7 +38,11 @@ const commentProductController = {
             return res.status(400).json("L'utilisateur, l'article et le contenu sont obligatoires.");
         };
 
-        const findUser = await User.findByPk(userId);
+        const findUser = await User.findByPk(userId, {
+            attributes: {
+                exclude: ["password"]
+            }
+        });
         if(!findUser){
             return res.status(404).json("Cet utilisateur est introuvable.");
         };

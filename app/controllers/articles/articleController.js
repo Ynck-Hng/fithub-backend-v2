@@ -44,7 +44,11 @@ const articleController = {
             return res.status(409).json("Title already exists.");
         };
 
-        const findUser = await User.findByPk(user_id);
+        const findUser = await User.findByPk(user_id, {
+            attributes: {
+                exclude: ["password"]
+            }
+        });
 
         if(!findUser){
             return res.status(404).json("User cannot be found.");
@@ -134,12 +138,14 @@ const articleController = {
         return res.status(200).json("Article deleted !");
     },
 
-    //TODO! A TESTER
-
     likedArticle: async (req, res) => {
         const {userId, articleId} = req.body;
 
-        const findUser = await User.findByPk(userId);
+        const findUser = await User.findByPk(userId, {
+            attributes: {
+                exclude: ["password"]
+            }
+        });
 
         if(!findUser){
             return res.status(404).json("User cannot be found.");

@@ -98,7 +98,11 @@ const challengeController = {
         const currentDate = new Date();
         const formattedDate = currentDate.toISOString().slice(0,10);
 
-        const findUser = await User.findByPk(userId)
+        const findUser = await User.findByPk(userId, {
+            attributes: {
+                exclude: ["password"]
+            }
+        });
         if(!findUser){
             challengeControllerError("Error, user cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("User cannot be found.");
@@ -153,7 +157,11 @@ const challengeController = {
 
         const formattedDate = currentDate.toISOString().slice(0, 10);
 
-        const findUser = await User.findByPk(userId);
+        const findUser = await User.findByPk(userId, {
+            attributes: {
+                exclude: ["password"]
+            }
+        });
         if(!findUser){
             challengeControllerError("Error, user cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("User cannot be found.");

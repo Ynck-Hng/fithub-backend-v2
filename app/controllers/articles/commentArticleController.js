@@ -34,7 +34,11 @@ const commentArticleController = {
             return res.status(404).json("Article cannot be found.");
         };
 
-        const findUser = await User.findByPk(user_id);
+        const findUser = await User.findByPk(user_id, {
+            attributes: {
+                exclude: ["password"]
+            }
+        });
 
         if(!findUser){
             return res.status(404).json("User cannot be found.");
