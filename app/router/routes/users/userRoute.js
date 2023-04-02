@@ -7,8 +7,12 @@ const isAuthenticated = require("./../../../utils/userValidations/isAuthenticate
 const isAdmin = require("../../../utils/userValidations/isAdmin");
 const multer = require("multer");
 const path = require("path");
+const storage = multer.diskStorage({
+    destination: "temp/"
+});
 const upload = multer({
-        dest: "uploads/",
+        storage,
+        dest: "temp/",
         fileFilter: function(req, file, cb){
             const filetype = /jpeg|jpg|png/;
             const mimetype = filetype.test(file.mimetype);

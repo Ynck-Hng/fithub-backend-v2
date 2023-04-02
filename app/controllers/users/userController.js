@@ -4,6 +4,7 @@ const emailValidator = require("email-validator");
 const bcrypt = require("bcrypt");
 const passwordChecker = require("../../utils/userValidations/passwordChecker");
 const fs = require("fs");
+
 const userController = {
     findAll: async (req, res) => {
         // find all except password
@@ -115,6 +116,14 @@ const userController = {
         // hash the password
         const hashedPassword = bcrypt.hashSync(password, 10);
 
+        let filePath;
+
+        if(req.file){
+            const sourceFile = req.file.path;
+            filePath = `uploads/${req.file.filename}`;
+            fs.copyFileSync(sourceFile, filePath);
+        }
+
         const newUser = {
             firstname,
             lastname,
@@ -124,11 +133,13 @@ const userController = {
             age,
             email,
             gender,
-            image_path: req.file.path || null,
+            image_path: filePath || null,
             image_mimetype: req.file.mimetype || null
         };
+
+        console.log(newUser);
         // store in the database
-        await User.create(newUser);
+        //await User.create(newUser);
         res.status(201).json("User created !");
     },
 
@@ -237,8 +248,11 @@ const userController = {
             findUser.age = age;
         };
 
-        if(req.file.path){
-            findUser.image_path = req.file.path;
+        if(req.file){
+            const sourceFile = req.file.path;
+            let filePath = `uploads/${req.file.filename}`;
+            fs.copyFileSync(sourceFile, filePath);
+            findUser.image_path = filePath;
             findUser.image_mimetype = req.file.mimetype;
         }
 
