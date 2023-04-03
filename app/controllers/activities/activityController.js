@@ -231,7 +231,7 @@ const activityController = {
         isSameIdAsUserSessionId(req, res, userId);
 
         const activityUserId = req.params.activityUserId;
-
+        
         const findUser = await User.findByPk(userId, {
             attributes: {
                 exclude: ["password"]

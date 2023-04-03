@@ -8,13 +8,22 @@ const {notFound, errorCollector} = require("./app/utils/errorHandler");
 const PORT = process.env.PORT;
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
-app.use(express.json());
+const fs = require("fs");
+const http = require("http");
+const https = require("https");
 
 app.use(cors({
     origin: "http://localhost:5173",
-    credentials: true
+    credentials: true,
 }));
 
+app.use((req, res, next) => {
+    res.header("Content-Type", "application/json;charset=UTF-8");
+    res.header("Access-Control-Allow-Origin", "http://127.0.0.1:5173");
+    res.header("Access-Control-Allow-Credentials", true);
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+})
 
 app.use(
     session({
@@ -38,6 +47,25 @@ app.use(notFound);
 
 app.use(errorCollector);
 
+/*
 app.listen(PORT, () => {
     console.log(`API Server started on ${PORT}`);
 });
+
+*/
+
+// IN PROD
+
+http.createServer(app).listen(8080);
+
+https.createServer(
+    {
+        key: fs.readFileSync("/etc/letsencrypt/live/ynck-hng-server.eddi.cloud/privkey.pem"),
+        cert: fs.readFileSync("/etc/letsencrypt/live/ynck-hng-server.eddi.cloud/cert.pem"),
+        ca: fs.readFileSync("/etc/letsencrypt/live/ynck-hng-server.eddi.cloud/chain.pem")
+    },
+    app
+).listen(4443, () => {
+    console.log("Listening on PORT : 4443");
+});
+
