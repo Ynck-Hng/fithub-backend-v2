@@ -11,12 +11,12 @@ const cookieParser = require("cookie-parser");
 const fs = require("fs");
 const http = require("http");
 const https = require("https");
-
+/*
 app.use(cors({
     origin: "http://localhost:5173",
     credentials: true,
 }));
-
+*/
 app.use((req, res, next) => {
     res.header("Content-Type", "application/json;charset=UTF-8");
     res.header("Access-Control-Allow-Origin", "http://127.0.0.1:5173");
@@ -55,14 +55,15 @@ app.listen(PORT, () => {
 */
 
 // IN PROD
-
+// server running on port 8080 for redirection
 http.createServer(app).listen(8080);
 
+// server running on port 4443 special O'clock
 https.createServer(
     {
-        key: fs.readFileSync("/etc/letsencrypt/live/ynck-hng-server.eddi.cloud/privkey.pem"),
-        cert: fs.readFileSync("/etc/letsencrypt/live/ynck-hng-server.eddi.cloud/cert.pem"),
-        ca: fs.readFileSync("/etc/letsencrypt/live/ynck-hng-server.eddi.cloud/chain.pem")
+        key: fs.readFileSync('/etc/letsencrypt/live/ynck-hng-server.eddi.cloud/privkey.pem'),
+        cert: fs.readFileSync('/etc/letsencrypt/live/ynck-hng-server.eddi.cloud/cert.pem'),
+        ca: fs.readFileSync('/etc/letsencrypt/live/ynck-hng-server.eddi.cloud/chain.pem')
     },
     app
 ).listen(4443, () => {
