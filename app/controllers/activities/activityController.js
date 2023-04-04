@@ -184,7 +184,6 @@ const activityController = {
         const findAllUserActivityByDate = await ActivityUser.findAll({
             where: {
                 user_id,
-                activity_id,
                 date_assigned: formattedToday
             }
         });
