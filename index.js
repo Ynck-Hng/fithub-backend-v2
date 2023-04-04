@@ -11,6 +11,9 @@ const cookieParser = require("cookie-parser");
 const fs = require("fs");
 const http = require("http");
 const https = require("https");
+const swaggerUi = require("swagger-ui-express");
+const swaggerDocument = require("./app/utils/swagger.json");
+
 /*
 app.use(cors({
     origin: "http://localhost:5173",
@@ -41,24 +44,27 @@ app.use(
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(router);
 
 app.use(notFound);
 
 app.use(errorCollector);
 
+
+// remove comment if in development
 /*
+
 app.listen(PORT, () => {
     console.log(`API Server started on ${PORT}`);
 });
-
 */
+
 
 // IN PROD
 // server running on port 8080 for redirection
 http.createServer(app).listen(8080);
 
-// server running on port 4443 special O'clock
 https.createServer(
     {
         key: fs.readFileSync('/etc/letsencrypt/live/ynck-hng-server.eddi.cloud/privkey.pem'),
