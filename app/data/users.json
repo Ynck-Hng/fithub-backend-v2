@@ -1,0 +1,20 @@
+[
+    {
+        "firstname": "Adrien",
+        "lastname": "Almond",
+        "nickname": "Adrimond",
+        "phone": "0123456789",
+        "role": "user",
+        "login_streak": "2",
+        "password": "test", // to encrypt
+        "email": "adrimond@gmail.com",
+        "weight": 67,
+        "age": 23,
+        "gender": "homme",
+        "challenge_id": "1",
+        "xp": 2000,
+        "profile_visibility": "publique",
+        "image_path": null,
+        "image_mimetype": null
+    }
+]

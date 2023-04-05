@@ -92,7 +92,7 @@ const userController = {
         };
 
         // check email with email validator
-        const checkEmail = emailValidator.validate(email);
+        const checkEmail = emailValidator.validate(email.toLowerCase());
 
         if(!checkEmail){
             userControllerError("Error, invalid email.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
@@ -101,7 +101,7 @@ const userController = {
 
         const findUserEmail = await User.findOne({
             where: {
-                email
+                email: email.toLowerCase()
             }
         });
 
@@ -158,7 +158,7 @@ const userController = {
             password: hashedPassword,
             weight,
             age,
-            email,
+            email: email.toLowerCase(),
             gender,
             image_path: null || filePath,
             image_mimetype: null || fileMimetype
@@ -336,6 +336,7 @@ const userController = {
         };
         // make sure that user exists
         const findUser = await User.findOne({
+            exclude: ["password"],
             where:{
                 email
             }

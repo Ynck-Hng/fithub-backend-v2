@@ -1,6 +1,6 @@
 const multer = require("multer");
 const upload = multer({
-    dest: "uploads/",
+    dest: "temp/",
     fileFilter: (req, file, cb) => {
         const fileType = /jpeg|jpg|png/;
         const isCorrectFileMimetype = fileType.test(file.mimetype);

@@ -16,6 +16,7 @@ const swaggerDocument = require("./app/utils/swagger.json");
 const swaggerUiOptions = {
 	explorer: true
 }
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 /*
 app.use(cors({
     origin: "http://localhost:5173",
@@ -24,7 +25,9 @@ app.use(cors({
 */
 app.use((req, res, next) => {
     res.header("Content-Type", "application/json;charset=UTF-8");
+    // authorize allow origin URLs to make requests
     res.header("Access-Control-Allow-Origin", "*");
+    // allows the client to send credentials + cookies to the server
     res.header("Access-Control-Allow-Credentials", true);
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
