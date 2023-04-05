@@ -71,13 +71,12 @@ http.createServer(app).listen(8080);
 
 https.createServer(
     {
-        key: fs.readFileSync('/etc/letsencrypt/live/ynck-hng-server.eddi.cloud/privkey.pem'),
-        cert: fs.readFileSync('/etc/letsencrypt/live/ynck-hng-server.eddi.cloud/cert.pem'),
-        ca: fs.readFileSync('/etc/letsencrypt/live/ynck-hng-server.eddi.cloud/chain.pem')
+        key: fs.readFileSync(`${process.env.CERT_KEY}`),
+        cert: fs.readFileSync(`${process.env.CERT_CERTIF}`),
+        ca: fs.readFileSync(`${process.env.CERT_CA}`)
     },
     app
 ).listen(4443, () => {
     console.log("Listening on PORT : 4443");
 });
-
 */
