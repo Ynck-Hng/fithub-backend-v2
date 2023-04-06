@@ -32,7 +32,7 @@ const challengeController = {
 
     createOne: async (req, res) => {
         const {label} = req.body;
-
+        // error if not label provided
         if(!label){
             challengeControllerError("Error, label missing.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(400).json("Label is required.");
@@ -43,7 +43,7 @@ const challengeController = {
                 label
             }
         });
-
+        // if label does not exist, error 404
         if(findChallengeLabel){
             challengeControllerError("Error, label exists already.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(409).json("Challenge already exists.");
@@ -61,15 +61,15 @@ const challengeController = {
     updateOne: async (req, res) => {
         const challengeId = req.params.challengeId;
 
-        const {label} = req.params.challengeId;
+        const {label} = req.body;
 
         const findChallenge = await Challenge.findByPk(challengeId);
-        
+        // if no challenge, error 404
         if(!findChallenge){
             challengeControllerError("Error, no challenge found", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("Challenge cannot be found.");
         };
-
+        // if label provided, make sure it is not already existing
         if(label){
             const findChallengeLabel = await Challenge.findOne({
                 where:{
@@ -84,7 +84,7 @@ const challengeController = {
         
             findChallenge.label = label;
         }
-
+        // save the changes
         await findChallenge.save();
 
         res.status(200).json("Challenge updated !");
@@ -93,16 +93,13 @@ const challengeController = {
     assignChallenge: async (req, res) => {
 
         const {userId} = req.body;
-        
-        // formate date to retrieve a YYYY-MM-DD date
-        const currentDate = new Date();
-        const formattedDate = currentDate.toISOString().slice(0,10);
 
         const findUser = await User.findByPk(userId, {
             attributes: {
                 exclude: ["password"]
             }
         });
+        // if no user, error 404
         if(!findUser){
             challengeControllerError("Error, user cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("User cannot be found.");
@@ -114,21 +111,28 @@ const challengeController = {
                 date_assigned: formattedDate
             }
         });
-        
+        // check if the user already received a challenge
+        // if yes, then error
+        // else proceed
         if(findChallengeUserByDate){
             challengeControllerError("Error, user received a daily challenge already.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(409).json("User already received a daily challenge.");
         };
         
         const allChallenges = await Challenge.findAll();
-
+        // if no challenges, then return an error
+        // checking length because findAll always returns [], even when nothing is found
         if(allChallenges.length === 0){
             challengeControllerError("Error, challenge cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("Challenge cannot be found.");
         };
 
-        const randomChallengeNumber = randomNumber(allChallenges.length);
+        // formate date to retrieve a YYYY-MM-DD date
+        const currentDate = new Date();
+        const formattedDate = currentDate.toISOString().slice(0,10);
 
+        const randomChallengeNumber = randomNumber(allChallenges.length);
+        // assign the challenge to the user 
         const newUserChallenge = {
             user_id: userId,
             challenge_id: allChallenges[randomChallengeNumber].id,
@@ -148,24 +152,26 @@ const challengeController = {
     challengeChecker: async (req, res) => {
 
         const userId = req.params.userId;
-
+        // check if the userId and the session user's id is the same
+        // if not, it will return an error
         isSameIdAsUserSessionId(req, res, userId);
 
         const {challengeId} = req.body;
-
-        const currentDate = new Date();
-
-        const formattedDate = currentDate.toISOString().slice(0, 10);
 
         const findUser = await User.findByPk(userId, {
             attributes: {
                 exclude: ["password"]
             }
         });
+
         if(!findUser){
             challengeControllerError("Error, user cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("User cannot be found.");
         }
+
+        const currentDate = new Date();
+
+        const formattedDate = currentDate.toISOString().slice(0, 10);
 
         const findChallengeUserByDate = await ChallengeUser.findOne({
             where: {
@@ -187,10 +193,11 @@ const challengeController = {
             case 'no':
                 findChallengeUserByDate.completed = 'yes';
                 findChallengeUserByDate.save();
+                // check if the user was active yesterday
                 const wasUserActiveYesterday = userWasActive("yesterday", userId, ChallengeUser, ActivityUser, findUser);
                 
                 findUser.login_streak += 1;
-
+                // if not active, then reset the streak
                 if(!wasUserActiveYesterday){
                     findUser.login_streak = 0;
                 };

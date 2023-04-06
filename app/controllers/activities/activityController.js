@@ -270,7 +270,7 @@ const activityController = {
         // format today's date in a YYYY MM DD format
         const date = new Date();
         const formattedDate = date.toISOString().slice(0, 10);
-    
+        // find all activities the user did today
         if(findUserActivity.date_assigned === formattedDate){
             const findAllUserActivityByDate = await ActivityUser.findAll({
                 where: {
@@ -299,9 +299,9 @@ const activityController = {
                 // delete entry
                 await findUserActivity.destroy();
 
-                // check if the user had an activity today
+                // check if the user had an activity today or challenge
                 const findUserActivityByDateAfterUpdate = userWasActive("today", userId, ChallengeUser, ActivityUser);
-
+                // otherwise substract 1 to the login streak because user was inactive today
                 if(!findUserActivityByDateAfterUpdate){
                     findUser.login_streak -= 1
                 }
@@ -317,6 +317,7 @@ const activityController = {
                 // check if user had an activity today
                 const findUserActivityByDateAfterUpdate = userWasActive("today", userId, ChallengeUser, ActivityUser);
 
+                // otherwise subtract 1 to the login streak, because user was inactive today
                 if(!findUserActivityByDateAfterUpdate){
                     findUser.login_streak -= 1
                 }
