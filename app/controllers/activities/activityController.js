@@ -83,6 +83,8 @@ const activityController = {
             return res.status(404).json("Activity cannot be found.");
         };
 
+        // if there is a code
+        // make sure the code is not already an existing one
         if(code){
             const findActivityCode = await Activity.findOne({
                 where: {
@@ -94,9 +96,12 @@ const activityController = {
                 activityControllerError("Error, code already exists.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
                 return res.status(409).json("Code already exists.");
             };
+
+            // else assign the new code
             findActivity.code = code;
         };
 
+        // check the label is a unique one
         if(label){
             const findActivityLabel = await Activity.findOne({
                 where: {
@@ -108,6 +113,8 @@ const activityController = {
                 activityControllerError("Error, label already exists.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
                 return res.status(409).json("Label already exists.");
             };
+
+            // else, assign the new label
             findActivity.label = label;
         };
 
@@ -115,6 +122,7 @@ const activityController = {
             findActivity.met = met;
         };
 
+        // check if the category exists
         if(category_activity_id){
             const findCategoryActivity = await CategoryActivity.findByPk(category_activity_id);
         
@@ -146,13 +154,14 @@ const activityController = {
     },
 
     assignActivityToUser: async (req, res) => {
-    
+
         const {user_id, activity_id, duration} = req.body;
 
         if(!user_id || !activity_id || !duration){
             return res.status(400).json("The user's id, activity's id and the duration are required.");
         };
-
+        // checks if the user's id is the same as the session's ID
+        // otherwise return an error
         isSameIdAsUserSessionId(req, res, user_id);
 
         const findUser = await User.findByPk(user_id, {
@@ -160,11 +169,12 @@ const activityController = {
                 exclude: ["password"]
             }
         });
+
         if(!findUser) {
             activityControllerError("Error, user cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("User cannot be found.");
         };
-
+        
         const findActivity = await Activity.findByPk(activity_id);
         
         if(!findActivity){
@@ -172,17 +182,21 @@ const activityController = {
             return res.status(404).json("Activity cannot be found.");
         };
 
+        // checks if the user was active yesterday
+
         const wasUserActiveYesterday = userWasActive(user_id, ChallengeUser, ActivityUser, findUser);
         
+        // if yes, then add 1
         findUser.login_streak += 1;
 
+        // if not, then reset to 0
         if(!wasUserActiveYesterday){
             findUser.login_streak = 0;
         };
 
-
+        // gets current day's date
         const today = new Date();
-
+        // formats the date to retrieve it in a YYYY MM DD format
         const formattedToday = today.toISOString().slice(0, 10);
 
         const findAllUserActivityByDate = await ActivityUser.findAll({
@@ -220,7 +234,7 @@ const activityController = {
             duration,
             calories: caloriesFromActivity,
             date_assigned: formattedToday
-        }
+        };
 
         await ActivityUser.create(newActivity);
 
@@ -253,6 +267,7 @@ const activityController = {
             return res.status(404).json("Activity already not assigned to user.");
         };
 
+        // format today's date in a YYYY MM DD format
         const date = new Date();
         const formattedDate = date.toISOString().slice(0, 10);
     

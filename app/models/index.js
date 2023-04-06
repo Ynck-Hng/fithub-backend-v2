@@ -242,6 +242,7 @@ Company.hasMany(Product, {
 
 module.exports = {
     Activity,
+    ActivityUser,
     CategoryActivity,
     Article,
     CommentArticle,

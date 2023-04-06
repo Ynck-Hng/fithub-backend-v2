@@ -1,11 +1,11 @@
 const userControllerError = require("debug")("controller:userControllerError");
-const { User } = require("./../../models");
+const { User, ActivityUser } = require("./../../models");
 const emailValidator = require("email-validator");
 const bcrypt = require("bcrypt");
 const passwordChecker = require("../../utils/userValidations/passwordChecker");
 const fs = require("fs");
 const isSameIdAsUserSessionId = require("./../../utils/userValidations/isSameAsUserSessionId");
-const { Z_DATA_ERROR } = require("zlib");
+const sequelize = require("../../data/sequelize");
 
 const userController = {
     findAll: async (req, res) => {
@@ -55,6 +55,7 @@ const userController = {
                 "ChallengesUser"
             ]
         });
+
         // if user not found, return 404
         if(!result){
             userControllerError("Error, user cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
@@ -69,7 +70,19 @@ const userController = {
             resultDataWithImage.dataURI = `data:${resultDataWithImage.image_mimetype};base64,${imageBuffer}`;
         }
 
-        res.status(200).json(resultDataWithImage);
+        // retrieves the total amount of calories burned during a specific day
+        const userTotalActivityByDay = await ActivityUser.findAll({
+            attributes: [
+                "date_assigned",
+                [sequelize.fn('sum', sequelize.col('calories')), 'total_calories_by_date'],
+            ],
+            where: {
+                user_id: userId
+            },
+            group: ['date_assigned']
+        });
+
+        res.status(200).json({resultDataWithImage, userTotalActivityByDay});
     },
 
     createOne: async (req, res) => {
@@ -103,6 +116,7 @@ const userController = {
         };
 
         const findUserEmail = await User.findOne({
+            exclude: ["password"],
             where: {
                 email: email.toLowerCase()
             }
@@ -115,6 +129,7 @@ const userController = {
 
         if(phone){
             const findUserPhone = await User.findOne({
+                exclude: ["password"],
                 where: {
                     phone
                 }
@@ -185,11 +200,7 @@ const userController = {
 
         const {firstname, lastname, nickname, phone, password, passwordConfirm, role, age, weight, email, gender} = req.body;
 
-        const findUser = await User.findByPk(userId, {
-            attributes: {
-                exclude: ["password"]
-            }
-        });
+        const findUser = await User.findByPk(userId);
 
         if(!findUser){
             userControllerError("Error, user cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
@@ -205,6 +216,7 @@ const userController = {
             findUser.lastname = lastname;
         };
 
+        // make sure that the phone is not already used
         if(phone){
             const findUserPhone = await User.findOne({
                 exclude: ["password"],
@@ -252,13 +264,14 @@ const userController = {
                 return res.status(400).json("Secure your password with at least a capitalized letter, a symbol and a number.");
             };
 
-            const hashedPasssword = bcrypt.hashSync(password, 10);
+            const hashedPassword = bcrypt.hashSync(password, 10);
 
-            findUser.password = hashedPasssword;
+            findUser.password = hashedPassword;
         };
 
         if(role){
             findUser.role = role;
+            // update the role of the current session as well
             if(req.session.user){
                 req.session.user.role = role;
             };
@@ -368,13 +381,12 @@ const userController = {
             userControllerError("Error, email or password is incorrect.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(400).json("Email or password is incorrect.");
         };
-        // creates a user session
+        // creates a user session storing only user id and role
         req.session.user = {
             id: findUser.id,
             role: findUser.role
         };
 
-        // to discuss what info we want to transmit to the client
         res.status(200).json(findUser);
     },
     
@@ -393,6 +405,7 @@ const userController = {
             return res.status(404).json("User cannot be found.");
         };
 
+        // Delete the user's session
         delete req.session.user;
 
         res.status(200).json("Logged out !");
