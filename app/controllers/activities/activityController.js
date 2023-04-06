@@ -149,6 +149,10 @@ const activityController = {
     
         const {user_id, activity_id, duration} = req.body;
 
+        if(!user_id || !activity_id || !duration){
+            return res.status(400).json("The user's id, activity's id and the duration are required.");
+        };
+
         isSameIdAsUserSessionId(req, res, user_id);
 
         const findUser = await User.findByPk(user_id, {

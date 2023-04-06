@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const passwordChecker = require("../../utils/userValidations/passwordChecker");
 const fs = require("fs");
 const isSameIdAsUserSessionId = require("./../../utils/userValidations/isSameAsUserSessionId");
+const { Z_DATA_ERROR } = require("zlib");
 
 const userController = {
     findAll: async (req, res) => {
@@ -21,8 +22,13 @@ const userController = {
             return res.status(404).json("Users cannot be found.");
         };
 
+        // Map over the list of users to add the image data 
+        // it is then stored in the dataURI property
         result.map((user) => {
+            // plain property set to true
+            // so userData is in the form of an object and not the sequelize type of result
             const userData = user.get({plain: true});
+            // if no images, then it is null
             if(!userData.image_path){
                 return userData.dataURI = null;
             };
@@ -46,10 +52,7 @@ const userController = {
             },
             include: [
                 "ActivitiesUsers",
-                "CommentsUser",
-                "ChallengesUser",
-                "ArticlesWritten",
-                "LikedArticles"
+                "ChallengesUser"
             ]
         });
         // if user not found, return 404
@@ -59,7 +62,7 @@ const userController = {
         };
         
         const resultDataWithImage = result.get({plain: true});
-
+        // if image, then create a dataURI property
         if(resultDataWithImage.image_path){
             const image = fs.readFileSync(`${result.image_path}`);
             const imageBuffer = Buffer.from(image).toString("base64");
@@ -142,12 +145,19 @@ const userController = {
 
         // hash the password
         const hashedPassword = bcrypt.hashSync(password, 10);
+
+        // variables to store the file path & mimetype
         let filePath;
         let fileMimetype;
+        // if there is a file, it will be stored in req.file
         if(req.file !== undefined){
+            // retrieve the file path
             const sourceFile = req.file.path;
+            // create the new path file because multer stores it in "temp/imageFileName"
             filePath = `uploads/${req.file.filename}`;
+            // use fs module to copy the content of the file from temp to uploads
             fs.copyFileSync(sourceFile, filePath);
+            // store the mimetype of the file
             fileMimetype = req.file.mimetype;
         }
 
@@ -249,6 +259,9 @@ const userController = {
 
         if(role){
             findUser.role = role;
+            if(req.session.user){
+                req.session.user.role = role;
+            };
         };
 
         if(weight){
@@ -286,7 +299,7 @@ const userController = {
         if(age){
             findUser.age = age;
         };
-
+        
         if(req.file){
             const sourceFile = req.file.path;
             let filePath = `uploads/${req.file.filename}`;
@@ -349,7 +362,7 @@ const userController = {
             return res.status(404).json("Email or password is incorrect.");
         };
 
-        const isPasswordCorrect = bcrypt.compare(password, findUser.password);
+        const isPasswordCorrect = await bcrypt.compare(password, findUser.password);
         
         if(!isPasswordCorrect){
             userControllerError("Error, email or password is incorrect.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
