@@ -13,9 +13,7 @@ const http = require("http");
 const https = require("https");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./app/utils/swagger.json");
-const swaggerUiOptions = {
-	explorer: true
-}
+
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 /*
 app.use(cors({
