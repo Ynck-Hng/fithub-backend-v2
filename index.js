@@ -53,33 +53,39 @@ app.use(express.urlencoded({extended: true}));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument, swaggerUiOptions));
 app.use(router);
 
+// error 404 handler
 app.use(notFound);
 
+// Collect the error and display the message.
 app.use(errorCollector);
-
 
 // remove comment if in development
 
 
-app.listen(PORT, () => {
-    console.log(`API Server started on ${PORT}`);
-});
+if(process.env.NODE_ENV === "development"){
+    
+    app.listen(PORT, () => {
+        console.log(`API Server started on http://localhost:${PORT}`);
+    });
+
+} else if(process.env.NODE_ENV === "production") {
+    // IN PROD
+    // server running on port 8080 for redirection
+
+    http.createServer(app).listen(8080);
+
+    https.createServer(
+        // https certificate keys
+        {
+            key: fs.readFileSync(`${process.env.CERT_KEY}`),
+            cert: fs.readFileSync(`${process.env.CERT_CERTIF}`),
+            ca: fs.readFileSync(`${process.env.CERT_CA}`)
+        },
+        app
+    ).listen(8080, () => {
+        console.log(`API Server started on https://ynck-hng-server.eddi.cloud:${PORT}`);
+    });
+};
 
 
 
-// IN PROD
-// server running on port 8080 for redirection
-/*
-http.createServer(app).listen(8080);
-
-https.createServer(
-    {
-        key: fs.readFileSync(`${process.env.CERT_KEY}`),
-        cert: fs.readFileSync(`${process.env.CERT_CERTIF}`),
-        ca: fs.readFileSync(`${process.env.CERT_CA}`)
-    },
-    app
-).listen(8080, () => {
-    console.log("Listening on PORT : 8080");
-});
-*/
