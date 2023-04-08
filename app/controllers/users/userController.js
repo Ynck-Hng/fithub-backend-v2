@@ -75,6 +75,7 @@ const userController = {
             attributes: [
                 "date_assigned",
                 [sequelize.fn('sum', sequelize.col('calories')), 'total_calories_by_date'],
+                [sequelize.fn('sum', sequelize.col('duration')), 'total_duration_by_date']
             ],
             where: {
                 user_id: userId
@@ -177,8 +178,8 @@ const userController = {
         }
 
         const newUser = {
-            firstname,
-            lastname,
+            firstname: firstname.charAt(0).toUpperCase() + firstname.slice(1).toLowerCase(),
+            lastname: lastname.charAt(0).toUpperCase + firstname.slice(1).toLowerCase(),
             nickname,
             password: hashedPassword,
             weight,
