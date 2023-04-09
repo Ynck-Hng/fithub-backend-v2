@@ -1,7 +1,7 @@
 const dayjs = require("dayjs");
 
 const userWasActive = async (todayOrYesterday, userId, ChallengeUserModel, ActivityUserModel) => {
-    const today = new Date()
+    // const today = new Date()
 
     switch(todayOrYesterday){
         case "today":
