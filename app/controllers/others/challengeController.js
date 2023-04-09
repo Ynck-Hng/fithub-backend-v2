@@ -105,10 +105,12 @@ const challengeController = {
             return res.status(404).json("User cannot be found.");
         };
 
+        const formattedToday = dayjs().format("DD-MM-YYYY");
+
         // check if user received a daily challenge today already
         const findChallengeUserByDate = await ChallengeUser.findOne({
             where: {
-                date_assigned: formattedDate
+                date_assigned: formattedToday
             }
         });
         // check if the user already received a challenge
@@ -126,17 +128,17 @@ const challengeController = {
             challengeControllerError("Error, challenge cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("Challenge cannot be found.");
         };
-
+        /*
         // formate date to retrieve a YYYY-MM-DD date
         const currentDate = new Date();
         const formattedDate = currentDate.toISOString().slice(0,10);
-
+        */
         const randomChallengeNumber = randomNumber(allChallenges.length);
         // assign the challenge to the user 
         const newUserChallenge = {
             user_id: userId,
             challenge_id: allChallenges[randomChallengeNumber].id,
-            date_assigned: formattedDate
+            date_assigned: formattedToday
         };
 
         // Assign challenge to user
@@ -168,16 +170,19 @@ const challengeController = {
             challengeControllerError("Error, user cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("User cannot be found.");
         }
-
+        /*
         const currentDate = new Date();
 
         const formattedDate = currentDate.toISOString().slice(0, 10);
+        */
+
+        const formattedToday = dayjs().format("DD-MM-YYYY");
 
         const findChallengeUserByDate = await ChallengeUser.findOne({
             where: {
                 user_id: userId,
                 challenge_id: challengeId,
-                date_assigned: formattedDate
+                date_assigned: formattedToday
             }
         });
 
@@ -192,7 +197,7 @@ const challengeController = {
         switch(findChallengeUserByDate.completed){
             case 'no':
                 findChallengeUserByDate.completed = 'yes';
-                findChallengeUserByDate.save();
+                await findChallengeUserByDate.save();
                 // check if the user was active yesterday
                 const wasUserActiveYesterday = userWasActive("yesterday", userId, ChallengeUser, ActivityUser, findUser);
                 
@@ -209,7 +214,7 @@ const challengeController = {
             // If challenge completed already
             // set to no
                 findChallengeUserByDate.completed = 'no';
-                findChallengeUserByDate.save();
+                await findChallengeUserByDate.save();
 
                 const checkWasUserActiveYesterday = userWasActive("yesterday", userId, ChallengeUser, ActivityUser, findUser);
                 

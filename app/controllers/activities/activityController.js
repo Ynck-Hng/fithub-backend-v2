@@ -5,6 +5,7 @@ const isSameIdAsUserSessionId = require("./../../utils/userValidations/isSameAsU
 const userWasActive = require("../../utils/userValidations/userWasActive");
 const { Activity, CategoryActivity, User, ChallengeUser } = require("./../../models");
 const caloriesCalculator = require("./../../utils/calories/caloriesCalculator");
+const dayjs = require("dayjs");
 
 const activityController = {
     findAll: async (req, res) => {
@@ -184,7 +185,7 @@ const activityController = {
 
         // checks if the user was active yesterday
 
-        const wasUserActiveYesterday = userWasActive(user_id, ChallengeUser, ActivityUser, findUser);
+        const wasUserActiveYesterday = userWasActive("yesterday", user_id, ChallengeUser, ActivityUser);
         
         // if yes, then add 1
         findUser.login_streak += 1;
@@ -193,12 +194,14 @@ const activityController = {
         if(!wasUserActiveYesterday){
             findUser.login_streak = 0;
         };
-
+        /*
         // gets current day's date
         const today = new Date();
         // formats the date to retrieve it in a YYYY MM DD format
         const formattedToday = today.toISOString().slice(0, 10);
+        */
 
+        const formattedToday = dayjs().format("DD-MM-YYYY");
         const findAllUserActivityByDate = await ActivityUser.findAll({
             where: {
                 user_id,
@@ -266,16 +269,19 @@ const activityController = {
             activityControllerError("Error, activity not assigned to user.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("Activity already not assigned to user.");
         };
-
+        /*
         // format today's date in a YYYY MM DD format
         const date = new Date();
         const formattedDate = date.toISOString().slice(0, 10);
+        */
+
+        const formattedToday = dayjs().format("DD-MM-YYYY");
         // find all activities the user did today
-        if(findUserActivity.date_assigned === formattedDate){
+        if(findUserActivity.date_assigned === formattedToday){
             const findAllUserActivityByDate = await ActivityUser.findAll({
                 where: {
                     user_id: userId,
-                    date_assigned: formattedDate
+                    date_assigned: formattedToday
                 }
             });
 
