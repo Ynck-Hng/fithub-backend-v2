@@ -38,8 +38,10 @@ app.use(
         resave: false,
         saveUninitialized: true,
         cookie: {
-            secure: false,
-            sameSite: "lax",
+            // if production, then true && none
+            // else false && lax
+            secure: process.env.NODE_ENV === "production" ? true : false,
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
             maxAge : 3600*60*60
         }
     })
@@ -69,7 +71,7 @@ if(process.env.NODE_ENV === "development"){
     // IN PROD
     // server running on port 8080 for redirection
 
-    http.createServer(app).listen(8080);
+    // http.createServer(app).listen(8080);
 
     https.createServer(
         // https certificate keys
