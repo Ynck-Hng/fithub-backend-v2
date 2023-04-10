@@ -179,7 +179,7 @@ const userController = {
 
         const newUser = {
             firstname: firstname.charAt(0).toUpperCase() + firstname.slice(1).toLowerCase(),
-            lastname: lastname.charAt(0).toUpperCase + firstname.slice(1).toLowerCase(),
+            lastname: lastname.charAt(0).toUpperCase() + firstname.slice(1).toLowerCase(),
             nickname,
             password: hashedPassword,
             weight,

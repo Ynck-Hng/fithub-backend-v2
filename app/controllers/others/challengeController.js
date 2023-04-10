@@ -105,7 +105,7 @@ const challengeController = {
             return res.status(404).json("User cannot be found.");
         };
 
-        const formattedToday = dayjs().format("DD-MM-YYYY");
+        const formattedToday = dayjs().format("YYYY-MM-DD");
 
         // check if user received a daily challenge today already
         const findChallengeUserByDate = await ChallengeUser.findOne({
@@ -176,7 +176,7 @@ const challengeController = {
         const formattedDate = currentDate.toISOString().slice(0, 10);
         */
 
-        const formattedToday = dayjs().format("DD-MM-YYYY");
+        const formattedToday = dayjs().format("YYYY-MM-DD");
 
         const findChallengeUserByDate = await ChallengeUser.findOne({
             where: {

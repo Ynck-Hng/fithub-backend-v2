@@ -201,7 +201,7 @@ const activityController = {
         const formattedToday = today.toISOString().slice(0, 10);
         */
 
-        const formattedToday = dayjs().format("DD-MM-YYYY");
+        const formattedToday = dayjs().format("YYYY-MM-DD");
         const findAllUserActivityByDate = await ActivityUser.findAll({
             where: {
                 user_id,
@@ -275,7 +275,7 @@ const activityController = {
         const formattedDate = date.toISOString().slice(0, 10);
         */
 
-        const formattedToday = dayjs().format("DD-MM-YYYY");
+        const formattedToday = dayjs().format("YYYY-MM-DD");
         // find all activities the user did today
         if(findUserActivity.date_assigned === formattedToday){
             const findAllUserActivityByDate = await ActivityUser.findAll({
