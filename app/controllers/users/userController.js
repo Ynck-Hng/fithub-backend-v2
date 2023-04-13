@@ -51,8 +51,15 @@ const userController = {
                 exclude: ['password']
             },
             include: [
-                "ActivitiesUsers",
-                "ChallengesUser"
+                {
+                    association: "ActivityUserList",
+                    include: "ActivityDescription"
+                },
+                {
+                    association: "ChallengeUserList",
+                    include: "ChallengeDescription",
+                    limits: 7 
+                }
             ]
         });
 
@@ -179,7 +186,7 @@ const userController = {
 
         const newUser = {
             firstname: firstname.charAt(0).toUpperCase() + firstname.slice(1).toLowerCase(),
-            lastname: lastname.charAt(0).toUpperCase() + firstname.slice(1).toLowerCase(),
+            lastname: lastname.charAt(0).toUpperCase() + lastname.slice(1).toLowerCase(),
             nickname,
             password: hashedPassword,
             weight,

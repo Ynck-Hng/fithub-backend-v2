@@ -241,7 +241,7 @@ const activityController = {
 
         await ActivityUser.create(newActivity);
 
-        res.status(200).json("Activity assigned to user !");
+        res.status(200).json({label: findActivity.label, calories: newActivity.calories, duration: newActivity.duration});
     },
 
     removeActivityFromUser: async (req, res) => {
@@ -331,9 +331,13 @@ const activityController = {
                    // save modification
                 await findUser.save();
             }
+            res.status(200).json("Activity removed from user !");
+
+        } else {
+            await findUserActivity.destroy();
+            res.status(200).json("Activity removed from user !");
         };
 
-        res.status(200).json("Activity removed from user !");
     }
 };
 
