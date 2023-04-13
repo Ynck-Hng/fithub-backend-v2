@@ -372,7 +372,7 @@ const userController = {
         const findUser = await User.findOne({
             exclude: ["password"],
             where:{
-                email
+                email: email.toLowerCase()
             }
         });
         
