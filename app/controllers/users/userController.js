@@ -294,7 +294,7 @@ const userController = {
             const findUserEmail = await User.findOne({
                 exclude: ["password"],
                 where: {
-                    email
+                    email: email.toLowerCase()
                 }
             });
             
@@ -303,7 +303,7 @@ const userController = {
                 return res.status(409).json("Email already exists.");
             };
             
-            findUser.email = email;
+            findUser.email = email.toLowerCase();
         }
 
         if(gender){
@@ -331,6 +331,8 @@ const userController = {
     deleteOne: async (req, res) => {
         const userId = req.params.userId;
 
+        isSameIdAsUserSessionId(req, res, userId);
+
         const findUser = await User.findByPk(userId, {
             attributes: {
                 exclude: ["password"]
@@ -343,6 +345,7 @@ const userController = {
         };
 
         await findUser.destroy();
+        delete req.session.user;
 
         res.status(200).json("User deleted !");
     },
@@ -394,6 +397,7 @@ const userController = {
     logout: async (req, res) => {
         
         const findSession = req.session.user;
+        isSameIdAsUserSessionId(req, res, userId);
         
         // make sure that user exists before logging out
         const findUser = await User.findByPk(findSession.id, {

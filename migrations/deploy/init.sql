@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS "user" (
     weight INTEGER NOT NULL,
     age INTEGER NOT NULL,
     gender user_gender DEFAULT 'non-spécifié',
-    challenge_id INT REFERENCES challenge(id) DEFAULT NULL,
+    challenge_id INT REFERENCES challenge(id) ON DELETE CASCADE DEFAULT NULL,
     xp INT DEFAULT 0,
     profile_visibility user_profile_visibility DEFAULT 'publique',
     created_at TIMESTAMPTZ DEFAULT NOW(),
