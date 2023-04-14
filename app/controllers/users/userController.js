@@ -14,6 +14,7 @@ const userController = {
             attributes: {
                 exclude: ['password']
             },
+            order: [['xp', 'DESC']]
         });
 
         // Must test result.length because findAll always returns [] if no users found
