@@ -15,21 +15,11 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./app/utils/swagger.json");
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-/*
+
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: "http://localhost:8080",
     credentials: true,
 }));
-*/
-app.use((req, res, next) => {
-    res.header("Content-Type", "application/json;charset=UTF-8");
-    // authorize allow origin URLs to make requests
-    res.header("Access-Control-Allow-Origin", "*");
-    // allows the client to send credentials + cookies to the server
-    res.header("Access-Control-Allow-Credentials", true);
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-})
 
 // secure true + sameSite none to allow the client to retrieve cookies
 app.use(
@@ -38,8 +28,10 @@ app.use(
         resave: false,
         saveUninitialized: true,
         cookie: {
-            secure: false,
-            sameSite: "lax",
+            // if production, then true && none
+            // else false && lax
+            secure: process.env.NODE_ENV === "production" ? true : false,
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
             maxAge : 3600*60*60
         }
     })
@@ -69,7 +61,7 @@ if(process.env.NODE_ENV === "development"){
     // IN PROD
     // server running on port 8080 for redirection
 
-    http.createServer(app).listen(8080);
+    // http.createServer(app).listen(8080);
 
     https.createServer(
         // https certificate keys

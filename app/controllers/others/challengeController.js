@@ -4,6 +4,7 @@ const isSameIdAsUserSessionId = require("../../utils/userValidations/isSameAsUse
 const randomNumber = require("../../utils/randomNumber");
 const userWasActive = require("../../utils/userValidations/userWasActive");
 const { Challenge, User, ChallengeUser } = require("./../../models");
+const dayjs = require("dayjs");
 
 const challengeController = {
     findAll: async (req, res) => {
@@ -105,11 +106,12 @@ const challengeController = {
             return res.status(404).json("User cannot be found.");
         };
 
-        const formattedToday = dayjs().format("DD-MM-YYYY");
+        const formattedToday = dayjs().format("YYYY-MM-DD");
 
         // check if user received a daily challenge today already
         const findChallengeUserByDate = await ChallengeUser.findOne({
             where: {
+                user_id: userId,
                 date_assigned: formattedToday
             }
         });
@@ -147,7 +149,7 @@ const challengeController = {
         await findUser.save();
         await ChallengeUser.create(newUserChallenge);
 
-        res.status(200).json("Challenge assigned to user !");
+        res.status(200).json(allChallenges[randomChallengeNumber]);
     
     },
 
@@ -176,7 +178,7 @@ const challengeController = {
         const formattedDate = currentDate.toISOString().slice(0, 10);
         */
 
-        const formattedToday = dayjs().format("DD-MM-YYYY");
+        const formattedToday = dayjs().format("YYYY-MM-DD");
 
         const findChallengeUserByDate = await ChallengeUser.findOne({
             where: {

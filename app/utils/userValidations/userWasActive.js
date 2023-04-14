@@ -7,7 +7,7 @@ const userWasActive = async (todayOrYesterday, userId, ChallengeUserModel, Activ
         case "today":
             // checking if user was active today
                 //const formattedToday = today.toISOString().slice(0, 10);
-                const formattedToday = dayjs().format("DD-MM-YYYY");
+                const formattedToday = dayjs().format("YYYY-MM-DD");
             // checking for at least one activity today where the challenge is completed
             const findChallengeUserToday = await ChallengeUserModel.findOne({
                 where: {
@@ -47,7 +47,7 @@ const userWasActive = async (todayOrYesterday, userId, ChallengeUserModel, Activ
                 const formattedYesterday = yesterday.toISOString().slice(0, 10);
                 */
 
-                const formattedYesterday = dayjs().subtract(1, "day").format("DD-MM-YYYY");
+                const formattedYesterday = dayjs().subtract(1, "day").format("YYYY-MM-DD");
                 // check if the user had completed a challenge yesterday
                 const findChallengeUserYesterday = await ChallengeUserModel.findOne({
                     where: {

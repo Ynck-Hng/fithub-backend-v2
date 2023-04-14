@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS challenge_user (
     user_id INT REFERENCES "user"(id) NOT NULL,
     challenge_id INT REFERENCES challenge(id) ON DELETE CASCADE NOT NULL,
     completed completed_challenge DEFAULT 'no',
-    date_assigned TEXT DEFAULT TO_CHAR(NOW(), 'DD-MM-YYYY'),
+    date_assigned TEXT DEFAULT TO_CHAR(NOW(), 'YYYY-MM-DD'),
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NULL
 );
@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS activity_user (
     activity_id INT REFERENCES activity(id) ON DELETE CASCADE NOT NULL,
     calories INT NOT NULL CHECK (calories > 1),
     duration INT NOT NULL CHECK (duration > 1),
-    date_assigned TEXT DEFAULT TO_CHAR(NOW(), 'DD-MM-YYYY'),
+    date_assigned TEXT DEFAULT TO_CHAR(NOW(), 'YYYY-MM-DD'),
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NULL
 );

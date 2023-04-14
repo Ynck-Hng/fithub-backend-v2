@@ -10,10 +10,9 @@ challenge_user,
 challenge,
 "user";
 
-DROP TYPE IF EXISTS user_role,
-product_availability,
+DROP TYPE IF EXISTS completed_challenge,
+user_role,
 user_profile_visibility,
-user_gender,
-completed_challenge;
+user_gender;
 
 COMMIT;
