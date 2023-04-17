@@ -25,6 +25,7 @@ const userController = {
 
         // Map over the list of users to add the image data 
         // it is then stored in the dataURI property
+        /*
         result.map((user) => {
             // plain property set to true
             // so userData is in the form of an object and not the sequelize type of result
@@ -38,7 +39,7 @@ const userController = {
             const imageBuffer = Buffer.from(image).toString("base64");
             userData.dataURI = `data:${userData.image_mimetype};base64,${imageBuffer}`;
         })
-
+        */
         res.status(200).json(result);
     },
 
@@ -69,7 +70,7 @@ const userController = {
             userControllerError("Error, user cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("User cannot be found.");
         };
-        
+        /*
         const resultDataWithImage = result.get({plain: true});
         // if image, then create a dataURI property
         if(resultDataWithImage.image_path){
@@ -77,7 +78,7 @@ const userController = {
             const imageBuffer = Buffer.from(image).toString("base64");
             resultDataWithImage.dataURI = `data:${resultDataWithImage.image_mimetype};base64,${imageBuffer}`;
         }
-
+        */
         // retrieves the total amount of calories burned during a specific day
         const userTotalActivityByDay = await ActivityUser.findAll({
             attributes: [
@@ -91,7 +92,7 @@ const userController = {
             group: ['date_assigned']
         });
 
-        res.status(200).json({resultDataWithImage, userTotalActivityByDay});
+        res.status(200).json({result, userTotalActivityByDay});
     },
 
     createOne: async (req, res) => {
