@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS "user" (
 CREATE TYPE completed_challenge AS ENUM ('yes', 'no');
 
 CREATE TABLE IF NOT EXISTS challenge_user (
-    user_id INT REFERENCES "user"(id) NOT NULL,
+    user_id INT REFERENCES "user"(id) ON DELETE CASCADE NOT NULL,
     challenge_id INT REFERENCES challenge(id) ON DELETE CASCADE NOT NULL,
     completed completed_challenge DEFAULT 'no',
     date_assigned TEXT DEFAULT TO_CHAR(NOW(), 'YYYY-MM-DD'),

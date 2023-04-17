@@ -23,23 +23,6 @@ const userController = {
             return res.status(404).json("Users cannot be found.");
         };
 
-        // Map over the list of users to add the image data 
-        // it is then stored in the dataURI property
-        /*
-        result.map((user) => {
-            // plain property set to true
-            // so userData is in the form of an object and not the sequelize type of result
-            const userData = user.get({plain: true});
-            // if no images, then it is null
-            if(!userData.image_path){
-                return userData.dataURI = null;
-            };
-
-            const image = fs.readFileSync(`${userData.image_path}`);
-            const imageBuffer = Buffer.from(image).toString("base64");
-            userData.dataURI = `data:${userData.image_mimetype};base64,${imageBuffer}`;
-        })
-        */
         res.status(200).json(result);
     },
 
@@ -70,15 +53,7 @@ const userController = {
             userControllerError("Error, user cannot be found.", `path : ${req.protocol}://${req.get("host")}${req.originalUrl}`);
             return res.status(404).json("User cannot be found.");
         };
-        /*
-        const resultDataWithImage = result.get({plain: true});
-        // if image, then create a dataURI property
-        if(resultDataWithImage.image_path){
-            const image = fs.readFileSync(`${result.image_path}`);
-            const imageBuffer = Buffer.from(image).toString("base64");
-            resultDataWithImage.dataURI = `data:${resultDataWithImage.image_mimetype};base64,${imageBuffer}`;
-        }
-        */
+
         // retrieves the total amount of calories burned during a specific day
         const userTotalActivityByDay = await ActivityUser.findAll({
             attributes: [
@@ -92,7 +67,7 @@ const userController = {
             group: ['date_assigned']
         });
 
-        res.status(200).json({result, userTotalActivityByDay});
+        res.status(200).json({resultDataWithImage: result, userTotalActivityByDay});
     },
 
     createOne: async (req, res) => {
@@ -179,9 +154,9 @@ const userController = {
             // retrieve the file path
             const sourceFile = req.file.path;
             // create the new path file because multer stores it in "temp/imageFileName"
-            filePath = `uploads/${req.file.filename}`;
+            filePath = `${req.file.filename}`;
             // use fs module to copy the content of the file from temp to uploads
-            fs.copyFileSync(sourceFile, filePath);
+            fs.copyFileSync(sourceFile, `uploads/${filePath}`);
             // store the mimetype of the file
             fileMimetype = req.file.mimetype;
         }
@@ -325,8 +300,8 @@ const userController = {
         
         if(req.file){
             const sourceFile = req.file.path;
-            let filePath = `uploads/${req.file.filename}`;
-            fs.copyFileSync(sourceFile, filePath);
+            let filePath = `${req.file.filename}`;
+            fs.copyFileSync(sourceFile, `uploads/${filePath}`);
             findUser.image_path = filePath;
             findUser.image_mimetype = req.file.mimetype;
         }
