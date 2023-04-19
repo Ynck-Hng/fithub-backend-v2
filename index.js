@@ -17,7 +17,7 @@ const swaggerDocument = require("./app/utils/swagger.json");
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use(cors({
-    origin: "http://localhost:8080",
+    origin: "https://fithub.surge.sh",
     credentials: true,
 }));
 
@@ -30,8 +30,8 @@ app.use(
         cookie: {
             // if production, then true && none
             // else false && lax
-            secure: process.env.NODE_ENV === "production" ? true : false,
-            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+            secure: process.env.NODE_ENV === "development" ? true : false,
+            sameSite: process.env.NODE_ENV === "development" ? "none" : "lax",
             maxAge : 3600*60*60
         }
     })
