@@ -27,6 +27,6 @@
   "main": "index.js",
   "license": "MIT",
   "engines": {
-    "node": ">=18.14.0"
+    "node": ">=18.12.1"
   }
 }
