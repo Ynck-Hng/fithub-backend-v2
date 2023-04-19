@@ -944,6 +944,7 @@ COPY public.activity_user (id, user_id, activity_id, calories, duration, date_as
 --
 
 COPY public.category_activity (id, label, created_at, updated_at) FROM stdin;
+INSERT INTO category_activity (id, label, created_at, updated_at) VALUES
 1	Cyclisme	2023-04-11 09:21:08.514+02	2023-04-11 09:21:08.514+02
 2	Exercice intérieur	2023-04-11 09:21:08.551+02	2023-04-11 09:21:08.551+02
 3	Danse	2023-04-11 09:21:08.554+02	2023-04-11 09:21:08.554+02
