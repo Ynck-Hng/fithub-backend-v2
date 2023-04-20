@@ -36,6 +36,8 @@ app.use(
             secure: true,
             sameSite: "none",
             domain: "fithub.surge.sh",
+            httpOnly: true,
+            path: "/login",
             maxAge : 3600*60*60
         }
     })
