@@ -15,11 +15,22 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./app/utils/swagger.json");
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
+/*
 app.use(cors({
     origin: "https://fithub.surge.sh",
     credentials: true,
 }));
+*/
+
+app.use((req, res, next) => {
+    res.header("Content-Type", "application/json;charset=UTF-8");
+    // authorize allow origin URLs to make requests
+    res.header("Access-Control-Allow-Origin", "https://fithub.surge.sh");
+    // allows the client to send credentials + cookies to the server
+    res.header("Access-Control-Allow-Credentials", true);
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+})
 
 // secure true + sameSite none to allow the client to retrieve cookies
 app.use(
@@ -31,7 +42,7 @@ app.use(
             // if production, then true && none
             // else false && lax
             secure: true,
-            sameSite: lax,
+            sameSite: none,
             maxAge : 3600*60*60
         }
     })
