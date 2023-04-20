@@ -14,7 +14,7 @@ const https = require("https");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./app/utils/swagger.json");
 
-app.set("trust proxy", true);
+app.set("trust proxy", 1);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 
