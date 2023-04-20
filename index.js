@@ -33,6 +33,7 @@ app.use(
             // else false && lax
             secure: true,
             sameSite: "none",
+            domain: "fithub.surge.sh",
             maxAge : 3600*60*60
         }
     })
