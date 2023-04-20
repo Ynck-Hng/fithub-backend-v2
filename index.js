@@ -33,6 +33,7 @@ app.use(
         cookie: {
             // if production, then true && none
             // else false && lax
+            name:"yep",
             secure: true,
             sameSite: "none",
             domain: "fithub.surge.sh",
