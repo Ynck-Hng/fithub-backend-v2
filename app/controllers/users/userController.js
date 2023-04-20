@@ -75,15 +75,15 @@ const userController = {
             return res.status(400).json("firstname, lastname, nickname, password, passwordConfirm, weight, email, age are required.");
         }
 
-        if(firstname.length < 25){
-            return res.status(400).json("Firstname must contain less than 16 characters.");
+        if(firstname.length > 25){
+            return res.status(400).json("Firstname must contain less than 25 characters.");
         };
 
-        if(lastname.length < 25){
-            return res.status(400).json("Lastname must contain less than 16 characters.");
+        if(lastname.length > 25){
+            return res.status(400).json("Lastname must contain less than 25 characters.");
         };
 
-        if(nickname.length < 16){
+        if(nickname.length > 16){
             return res.status(400).json("Nickname must contain less than 16 characters.");
         };
 
@@ -202,15 +202,15 @@ const userController = {
 
         // update value only if value is retrieved
         if(firstname){
-            if(firstname.length < 25){
-                return res.status(400).json("Firstname must contain less than 16 characters.");
+            if(firstname.length > 25){
+                return res.status(400).json("Firstname must contain less than 25 characters.");
             };
             findUser.firstname = firstname;
         };
 
         if(lastname){
-            if(lastname.length < 25){
-                return res.status(400).json("Lastname must contain less than 16 characters.");
+            if(lastname.length > 25){
+                return res.status(400).json("Lastname must contain less than 25 characters.");
             };
             findUser.lastname = lastname;
         };
@@ -234,7 +234,7 @@ const userController = {
 
         if(nickname){
 
-            if(nickname.length < 16){
+            if(nickname.length > 16){
                 return res.status(400).json("Nickname must contain less than 16 characters.");
             };
 
