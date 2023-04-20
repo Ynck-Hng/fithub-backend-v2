@@ -30,8 +30,8 @@ app.use(
         cookie: {
             // if production, then true && none
             // else false && lax
-            secure: process.env.NODE_ENV === "development" ? true : false,
-            sameSite: process.env.NODE_ENV === "development" ? "none" : "lax",
+            secure: true,
+            sameSite: none,
             maxAge : 3600*60*60
         }
     })
