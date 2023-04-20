@@ -19,7 +19,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 
 app.use(cors({
-    origin: "https://fithub-fithub2.vercel.app/",
+    origin: "https://fithub-fithub2.vercel.app",
     credentials: true,
 }));
 
