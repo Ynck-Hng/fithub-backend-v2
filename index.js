@@ -19,7 +19,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 
 app.use(cors({
-    origin: "https://fithub.surge.sh",
+    origin: "https://fithub-leazeraia-fithub2.vercel.app",
     credentials: true,
 }));
 
@@ -33,10 +33,8 @@ app.use(
         cookie: {
             // if production, then true && none
             // else false && lax
-            name:"yep",
             secure: true,
             sameSite: "none",
-            domain: "fithub.surge.sh",
             httpOnly: true,
             maxAge : 3600*60*60
         }
