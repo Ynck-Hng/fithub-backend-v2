@@ -31,7 +31,7 @@ app.use(
             // if production, then true && none
             // else false && lax
             secure: true,
-            sameSite: none,
+            sameSite: lax,
             maxAge : 3600*60*60
         }
     })
