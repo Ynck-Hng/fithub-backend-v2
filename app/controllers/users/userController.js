@@ -381,7 +381,7 @@ const userController = {
     logout: async (req, res) => {
         
         const findSession = req.session.user;
-        isSameIdAsUserSessionId(req, res, userId);
+        isSameIdAsUserSessionId(req, res, findSession.id);
         
         // make sure that user exists before logging out
         const findUser = await User.findByPk(findSession.id, {
