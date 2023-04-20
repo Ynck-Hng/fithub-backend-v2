@@ -36,13 +36,9 @@ const userController = {
                 exclude: ['password']
             },
             include: [
+                "ActivitiesUsers",
                 {
-                    association: "ActivityUserList",
-                    include: "ActivityDescription"
-                },
-                {
-                    association: "ChallengeUserList",
-                    include: "ChallengeDescription",
+                    association: "ChallengesUser",
                     limits: 7 
                 }
             ]
