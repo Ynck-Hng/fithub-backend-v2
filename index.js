@@ -14,7 +14,9 @@ const https = require("https");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./app/utils/swagger.json");
 
+app.set("trust proxy", true);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 
 app.use(cors({
     origin: "https://fithub.surge.sh",
